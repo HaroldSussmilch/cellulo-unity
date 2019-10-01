@@ -1,0 +1,3 @@
+[submodule "cellulo-qml-plugin"]
+	path = cellulo-qml-plugin
+	url = ssh://git@c4science.ch/diffusion/505/cellulo-qml-plugin.git
