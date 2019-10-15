@@ -44,18 +44,12 @@
     <ImplicitlyExpandNETStandardFacades>false</ImplicitlyExpandNETStandardFacades>
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="UnityEngine">
-      <HintPath>/home/haroldsussmilch/Unity/Hub/Editor/2019.2.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>/home/haroldsussmilch/Unity/Hub/Editor/2019.2.6f1/Editor/Data/Managed/UnityEditor.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
+  <ItemGroup>     <Compile Include="Assets\CameraFogScript.cs" />
      <Compile Include="Assets\Cellulo.cs" />
      <Compile Include="Assets\CelluloCollider.cs" />
      <Compile Include="Assets\GameScript.cs" />
+     <Compile Include="Assets\MultiPlayerCameraScript.cs" />
+     <Compile Include="Assets\NewBehaviourScript.cs" />
      <Compile Include="Assets\SampleScenes\Menu\Scripts\MenuSceneLoader.cs" />
      <Compile Include="Assets\SampleScenes\Menu\Scripts\PauseMenu.cs" />
      <Compile Include="Assets\SampleScenes\Menu\Scripts\SceneAndURLLoader.cs" />
@@ -64,6 +58,8 @@
      <Compile Include="Assets\SampleScenes\Scripts\ParticleSceneControls.cs" />
      <Compile Include="Assets\SampleScenes\Scripts\PlaceTargetWithMouse.cs" />
      <Compile Include="Assets\SampleScenes\Scripts\SlowMoButton.cs" />
+     <Compile Include="Assets\SurfaceCopyPositionScript.cs" />
+     <Compile Include="Assets\swarmBehaviourScript.cs" />
      <None Include="Assets\Samples\Polybrush\1.0.1\Shader Examples (Standard)\Shader\StandardVertexColor.shader" />
      <None Include="Assets\Samples\Polybrush\1.0.1\Shader Examples (Standard)\Shader\StandardTextureBlend.shader" />
      <None Include="Assets\SampleScenes\Shaders\Skybox-Procedural.shader" />
@@ -75,6 +71,15 @@
  </Reference>
  <Reference Include="Unity.VSCode.Editor">
  <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Polybrush">
+ <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/Unity.Polybrush.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Polybrush.Editor">
+ <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/Unity.Polybrush.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.ProBuilder.AssetIdRemapUtility">
+ <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/Unity.ProBuilder.AssetIdRemapUtility.dll</HintPath>
  </Reference>
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
@@ -109,6 +114,9 @@
  <Reference Include="UnityEngine.SpatialTracking">
  <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/UnityEngine.SpatialTracking.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.ProBuilder.AddOns.Editor">
+ <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/Unity.ProBuilder.AddOns.Editor.dll</HintPath>
+ </Reference>
  <Reference Include="Unity.TextMeshPro">
  <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
  </Reference>
@@ -124,17 +132,8 @@
  <Reference Include="com.unity.multiplayer-hlapi.Runtime">
  <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/com.unity.multiplayer-hlapi.Runtime.dll</HintPath>
  </Reference>
- <Reference Include="Unity.Polybrush">
- <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/Unity.Polybrush.dll</HintPath>
- </Reference>
- <Reference Include="Unity.Polybrush.Editor">
- <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/Unity.Polybrush.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.ProBuilder.AssetIdRemapUtility">
- <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/Unity.ProBuilder.AssetIdRemapUtility.dll</HintPath>
- </Reference>
- <Reference Include="Unity.ProBuilder.AddOns.Editor">
- <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/ScriptAssemblies/Unity.ProBuilder.AddOns.Editor.dll</HintPath>
+ <Reference Include="UnityEngine">
+ <HintPath>/home/haroldsussmilch/Unity/Hub/Editor/2019.2.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AIModule">
  <HintPath>/home/haroldsussmilch/Unity/Hub/Editor/2019.2.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -312,6 +311,9 @@
  </Reference>
  <Reference Include="UnityEngine.XRModule">
  <HintPath>/home/haroldsussmilch/Unity/Hub/Editor/2019.2.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.XRModule.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor">
+ <HintPath>/home/haroldsussmilch/Unity/Hub/Editor/2019.2.6f1/Editor/Data/Managed/UnityEditor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Analytics.Editor">
  <HintPath>/home/haroldsussmilch/Project-Files/EscapeTheGhost/Library/PackageCache/com.unity.analytics@3.3.2/Unity.Analytics.Editor.dll</HintPath>
