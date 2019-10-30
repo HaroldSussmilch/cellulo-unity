@@ -44,10 +44,15 @@
     <ImplicitlyExpandNETStandardFacades>false</ImplicitlyExpandNETStandardFacades>
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
-  <ItemGroup>     <Compile Include="Assets\CameraFogScript.cs" />
+  <ItemGroup>     <Compile Include="Assets\BasicBehaviourScriptCellulo.cs" />
+     <Compile Include="Assets\CameraFogScript.cs" />
+     <Compile Include="Assets\CameraTopFlockFollowing.cs" />
+     <Compile Include="Assets\Caustics\causticsProjector.cs" />
      <Compile Include="Assets\Cellulo.cs" />
      <Compile Include="Assets\CelluloCollider.cs" />
+     <Compile Include="Assets\Follow3rdPerson.cs" />
      <Compile Include="Assets\GameScript.cs" />
+     <Compile Include="Assets\LibDotsMapping.cs" />
      <Compile Include="Assets\MultiPlayerCameraScript.cs" />
      <Compile Include="Assets\NewBehaviourScript.cs" />
      <Compile Include="Assets\SampleScenes\Menu\Scripts\MenuSceneLoader.cs" />
@@ -58,8 +63,10 @@
      <Compile Include="Assets\SampleScenes\Scripts\ParticleSceneControls.cs" />
      <Compile Include="Assets\SampleScenes\Scripts\PlaceTargetWithMouse.cs" />
      <Compile Include="Assets\SampleScenes\Scripts\SlowMoButton.cs" />
+     <Compile Include="Assets\StartupInstantiate.cs" />
      <Compile Include="Assets\SurfaceCopyPositionScript.cs" />
      <Compile Include="Assets\swarmBehaviourScript.cs" />
+     <Compile Include="Assets\SwarmInfo.cs" />
      <None Include="Assets\Samples\Polybrush\1.0.1\Shader Examples (Standard)\Shader\StandardVertexColor.shader" />
      <None Include="Assets\Samples\Polybrush\1.0.1\Shader Examples (Standard)\Shader\StandardTextureBlend.shader" />
      <None Include="Assets\SampleScenes\Shaders\Skybox-Procedural.shader" />

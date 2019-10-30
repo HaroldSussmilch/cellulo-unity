@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/OceanScene.unity
+- path: Assets/Cellulo test control Scene.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

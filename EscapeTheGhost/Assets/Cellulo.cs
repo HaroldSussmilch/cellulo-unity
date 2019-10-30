@@ -205,4 +205,8 @@ public class Cellulo {
         kidnappedCallback = callback;
         setKidnappedCallback(id, kidnappedCallback);
     }
+    public long getID(){
+        return id;
+    }
+
 }
