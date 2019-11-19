@@ -1,0 +1,15 @@
+HOW TO :	Create a new color variation of the model
+
+- Open a preset fish through GIMP 
+
+
+- Select zones of a similar colour with the "Select by color tool"
+	If needed :	-adjust the threshold to select a bigger zone
+			-use Ctrl to add unselected areas of similar colour
+- In the menu, under Colors, use "Hue-Chroma" menu to adapt the color of the zones to your preference.
+
+-Export the result as JPEG (Ctrl+Shift+E)
+
+-Edit the .mtl files to refer to your .jpg file (or edit the name of your jpg file to match).
+
+-Having the .obj, .mtl and .jpg in the same folder add the folder to Unity and drag the Folder to your assets.
