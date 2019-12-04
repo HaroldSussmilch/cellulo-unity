@@ -84,9 +84,13 @@ public class SwarmInfo : MonoBehaviour
     public float getSwarmYrotation(){
 
     // Necessary fix for 3rd person camera : Unity recalculates the transform.rotation and does 180° Y-flips on negative X or Z
-
+        if (swarm_entities==null)
+            return 0f;
         float total_angle= 0;
         for (int i=0 ;i<swarm_entities.Count;i++){
+            if(swarm_entities[i]==null){
+                break;
+            }
             total_angle+=swarm_entities[i].transform.eulerAngles.y%360;
         }
         total_angle/=swarm_entities.Count;

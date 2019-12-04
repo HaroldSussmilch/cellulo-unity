@@ -28,6 +28,14 @@ public class MultiPlayerCameraScript : MonoBehaviour
 
     void Update()
     {
+        if((masterInfo.SW_version && masterInfo.SW_EN.Length!=objects.Count)||objects[0]==null)
+        {
+            objects.Clear();    
+            foreach (GameObject GO in masterInfo.SW_EN)
+                objects.Add(GO);
+        } 
+        if (objects.Count==0)  
+            return;
         playerAvgPos = GetCenterPoint();
         getSwarmAngle();
     }
@@ -54,6 +62,13 @@ public class MultiPlayerCameraScript : MonoBehaviour
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, newZoom, Time.deltaTime);
     }
     public Vector3 GetCenterPoint(){
+
+        if(objects==null){
+            return new Vector3 (0f,0f,0f);
+        }
+        if(objects[0]==null){     
+            return new Vector3 (0f,0f,0f);
+        }
         if (objects.Count ==1){ //if (objects.Count ==1){
             return objects[0].transform.position; // return objects[0].transform.position;
         }
@@ -66,6 +81,12 @@ public class MultiPlayerCameraScript : MonoBehaviour
     }
 
     float GetGreatestDistance(){
+        if( objects==null    ||  objects.Contains(null)  ||    objects.Count==0 ){
+            return zoomLimiter;
+        }
+        if(objects[0]==null){
+            return zoomLimiter;
+        }
         var bounds = new Bounds(objects[0].transform.position, Vector3.zero); //var bounds = new Bounds(objects[0].transform.position, Vector3.zero);
         for (int i=0; i<objects.Count;i++){             // for (int i=0; i<objects.Count;i++){ 
             bounds.Encapsulate(objects[i].transform.position);

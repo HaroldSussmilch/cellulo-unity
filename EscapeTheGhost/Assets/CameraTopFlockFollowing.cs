@@ -9,6 +9,8 @@ public class CameraTopFlockFollowing : MonoBehaviour
     private GameObject swarmCenter;
     public GameObject mp_cam;
     public GameObject self;
+    public GameObject customFollow;
+    public bool customFollowBool=false;
     public MultiPlayerCameraScript obj;
     private Vector3 center;
     public float height= 50;
@@ -29,6 +31,8 @@ public class CameraTopFlockFollowing : MonoBehaviour
     {
         center= swarmCenter.transform.position;
         Vector3 new_pos=center;
+        if (customFollowBool)
+            new_pos=customFollow.transform.position;
         new_pos[1]=height;
         // float diff=(self.transform.position-new_pos).magnitude;
          //use diff

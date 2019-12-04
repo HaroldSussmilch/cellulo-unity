@@ -17,6 +17,8 @@ public class MaterialMods : MonoBehaviour
     static bool firstRun=true;
     public Texture texture;
     static string[] guids={};
+    static string[] names=new string[56];
+    List<Texture> backupTextures;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,44 +27,131 @@ public class MaterialMods : MonoBehaviour
         m_Material=GetComponent<Renderer>().material;
         newMat=m_Material;
         mTex = newMat.mainTexture;
-        
+        string Bstring =" ";
+        string Sstring =" ";
+        int k=8;
+        int j=7;
         if (firstRun==true){
-            guids = AssetDatabase.FindAssets("Fish ", new[] {"Assets/Resources/Materials/FishMats/JPGS"}); 
             firstRun=false;
+/*             if (Application.isEditor){
+                guids = AssetDatabase.FindAssets("Fish ", new[] {"Assets/Resources/Materials/FishMats/JPGS"}); 
+            }
+            else{ */
+                for (j=0;j<7;j++){
+                    Bstring="Fish ";
+                    switch (j)
+                    {
+                        case 0:
+                            Bstring+="Citrus-B ";
+                            break;                                        
+                        case 1:
+                            Bstring+="Classic-B ";
+                            break;                     
+                        case 2:
+                            Bstring+="DeepSea-B ";
+                            break;
+                        case 3:
+                            Bstring+="Dusk-B ";
+                            break;                                     
+                        case 4:
+                            Bstring+="Lagoon-B ";
+                            break;                                     
+                        case 5:
+                            Bstring+="Lava-B ";
+                            break;                                     
+                        case 6:
+                            Bstring+="Magenta-B ";
+                            break;
+                        
+                    }
+                    for (k=0;k<8;k++){
+                        switch (k)
+                        {
+                            case 0:
+                                Sstring="Blue-S";
+                                break;                                        
+                            case 1:
+                                Sstring="BW-S";
+                                break;                     
+                            case 2:
+                                Sstring="DarkBlue-S";
+                                break;
+                            case 3:
+                                Sstring="Green-S";
+                                break;                                     
+                            case 4:
+                                Sstring="LightGreen-S";
+                                break;                                     
+                            case 5:
+                                Sstring="Magenta-S";
+                                break;                                     
+                            case 6:
+                                Sstring="Pink-S";
+                                break;
+                            case 7:
+                                Sstring="Red-S";
+                                break;
+                                                
+                        }
+                        string FullString =Bstring+Sstring;
+                        names[j*8+k]=FullString;
+                        //print(names[j*8+k]);
+                    }
+                }
+            //} 
         }
-        //AssetDatabase.RenameAsset("Assets/FishModels/TestFolder/12265_Fish_v1_L2.obj", "FishTest.obj"); //Works
-        string largeString=" ";
-        guids=RemoveDuplicates(guids);
-        for (int h=0;h<guids.Length;h++)
-        {
-            largeString+=AssetDatabase.GUIDToAssetPath(guids[h])+"\n ";
+        i=i%(j*k);
+       /* if (Application.isEditor){
+
+            //AssetDatabase.RenameAsset("Assets/FishModels/TestFolder/12265_Fish_v1_L2.obj", "FishTest.obj"); //Works
+            string largeString=" ";
+            guids=RemoveDuplicates(guids);
+            for (int h=0;h<guids.Length;h++)
+            {
+                largeString+=AssetDatabase.GUIDToAssetPath(guids[h])+"\n ";
+            }
+            //print ("AAA \n "+largeString);
         }
-        //print ("AAA \n "+largeString);
-        if (i==0)
-            guids=reshuffle(guids);
+        */
+        if (i==0){
+            /*if (Application.isEditor)
+                guids=reshuffle(guids);
+            else*/
+                names=reshuffle(names);
+        }
         
         // if (i>=guids.Length){
         //     i=0;
         //     guids=reshuffle(guids);
         // }
+/*         if (Application.isEditor){ 
+             foreach (string guid in guids)
+            {
+                //Debug.Log("All Assets Fish Found : " + AssetDatabase.GUIDToAssetPath(guid)+" \n"+this.gameObject); //https://docs.unity3d.com/ScriptReference/AssetDatabase.FindAssets.html
+            }
 
-        foreach (string guid in guids)
-        {
-            //Debug.Log("All Assets Fish Found : " + AssetDatabase.GUIDToAssetPath(guid)+" \n"+this.gameObject); //https://docs.unity3d.com/ScriptReference/AssetDatabase.FindAssets.html
-        }
-        string test =AssetDatabase.GUIDToAssetPath(guids[i]);
-        // print("Ttest "+test);
-        
+            string test =AssetDatabase.GUIDToAssetPath(guids[i]);
+            // print("Ttest "+test);
+            
 
-        string stringToRemove ="Assets/Resources/";
-        // Note: Extensions must be omitted ; Resources.Load searches in Resources folder directly
-        test = System.IO.Path.ChangeExtension(test, null); //gets path with folders and .jpg ext
-        //test = System.IO.Path.GetFileNameWithoutExtension(test);    //path without folders and .jpg ext : add string pathToAdd "Materials/FishMats/JPGS/" and test =pathToAdd+test
-        test=test.Substring(stringToRemove.Length); //remove Assets/Resources from path name
+            string stringToRemove ="Assets/Resources/";
+            // Note: Extensions must be omitted ; Resources.Load searches in Resources folder directly
+            test = System.IO.Path.ChangeExtension(test, null); //gets path with folders and .jpg ext
+            //test = System.IO.Path.GetFileNameWithoutExtension(test);    //path without folders and .jpg ext : add string pathToAdd "Materials/FishMats/JPGS/" and test =pathToAdd+test
+            test=test.Substring(stringToRemove.Length); //remove Assets/Resources from path name
 
-        mTex=Resources.Load(test) as Texture;
-        // print (mTex.name);  //Ref to texture to extract color scheme.
-        colourIdentification(mTex.name);
+            mTex=Resources.Load(test) as Texture;   //editor only
+            // print (mTex.name);  //Ref to texture to extract color scheme.
+            colourIdentification(mTex.name);    //editor only
+        }*/
+        //else{
+            string load="Materials/FishMats/JPGS/"+names[i];
+            mTex=Resources.Load(load) as Texture;
+            if (mTex==null){
+                print("mTex=null"+"\n "+load);
+            }
+            colourIdentification(load);
+        //}
         i++;
     }
 

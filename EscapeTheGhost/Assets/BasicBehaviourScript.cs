@@ -5,7 +5,7 @@ using UnityEngine;
 public class BasicBehaviourScript : MonoBehaviour
 {
 
-    private Space relativeTo=Space.World;
+    //private Space relativeTo=Space.World;
     public float mSpeed;
     
 

@@ -1,7 +1,2 @@
-Base path: '/home/haroldsussmilch/Unity/Hub/Editor/2019.2.6f1/Editor/Data', plugins path '/home/haroldsussmilch/Unity/Hub/Editor/2019.2.6f1/Editor/Data/PlaybackEngines'
+Base path: '/media/harold/DiskLinux/UnityInstall/2019.2.12f1/Editor/Data', plugins path '/media/harold/DiskLinux/UnityInstall/2019.2.12f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
-Cmd: compileComputeKernel
-  api=18 insize=420 outsize=1653 ok=1
-Unhandled exception: Protocol error - unexpected end of data (did the Editor crash?)
-
-Quitting shader compiler process

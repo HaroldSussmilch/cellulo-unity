@@ -6,12 +6,12 @@ using System.Drawing;
 public class IndiFlock : MonoBehaviour
 {
     public float speed;
-    float rotationSpeed=2.0f;
+    float AutorotationSpeed=4.5f;
     Vector3 averageHeading;
     Vector3 averagePosition;
     float neighbourDistance=45.0f;
     MaterialMods materialScript;
-    public class ColorCodes{
+    public class ColorCodes{ 
         public float[] bodyColors= new float[3];
         public float[] stripesColors= new float[3];
         string bodyColorString ;
@@ -138,25 +138,35 @@ public class IndiFlock : MonoBehaviour
     public ColorCodes prevFishColor= new ColorCodes();
     public bool colorSent;
     string mainTextureName;
+    public Quaternion CelluoInputQuat;          //Quat Cellulo tells the fish to rotate to
+    public Quaternion GoalQuat=Quaternion.identity;
+    bool amIcontrolled;
+    public float RotationSpeed;
+    public bool foodGotten=false;
+    public bool GoalReached=false;
+
     // Start is called before the first frame update
     void Start()
     {
         speed=globalFlock.fishMaxSpeed;
-        speed=Random.Range(0.8f*speed,1.2f *speed);
         //speed=0.9f;
         materialScript=this.gameObject.GetComponentInChildren<MaterialMods>();
         colorSent=false;
+        CelluoInputQuat=Quaternion.identity;
+        RotationSpeed=AutorotationSpeed;
     }
 
     // Update is called once per frame
     void Update()
     {
+        AutorotationSpeed=globalFlock.AutorotationSpeed;
+        amIcontrolled=this.gameObject.GetComponent<BasicBehaviourScriptCellulo>().amIcontrolled;
         if (FishColor!=null)
             prevFishColor=FishColor;
         if (materialScript==null)
             materialScript=this.gameObject.GetComponentInChildren<MaterialMods>();
 
-        if(Random.Range(0,10)<3)
+        if(Random.Range(0,10)<10)
             ApplyFlockingRules();
 
         swimForward();
@@ -165,7 +175,7 @@ public class IndiFlock : MonoBehaviour
         string previousMTN = mainTextureName;
         if(previousMTN!=this.GetComponentInChildren<Renderer>().material.mainTexture.name)
         {
-            print("Color change");
+            //print("Color change");
             colorSent=false;
             //Color Robot LED and put variable "robot color On" to limit Bandwidth usage
         }
@@ -197,7 +207,13 @@ public class IndiFlock : MonoBehaviour
         main.startColor = new UnityEngine.Color(FishColor.getStripesRedValue()/255f,FishColor.getStripesGreenValue()/255f,
                                     FishColor.getStripesBlueValue()/255f,0.05f);
         
-        //if (isControlled) : turn on aura (particle system) 
+        if (amIcontrolled) 
+            ps.Play();
+        else{
+            ps.Stop();
+            ps.Clear();
+
+        }
         return;
         }
     }
@@ -251,26 +267,68 @@ public class IndiFlock : MonoBehaviour
             {
                 centroidPos/=groupSize;
             }
-
-                //speed = 1;
                 
-                Vector3 swimAroundPos= new Vector3(120f,20f,250f);
+                Vector3 swimAroundPos= new Vector3(120f,20f,750f);
                 Vector3 direction = (   3f*(centroidPos-this.transform.position) +
-                                        2f*vavoid  +
+                                        1f*vavoid  +
                                         0.01f*Mathf.Min(10,Vector3.Distance(swimAroundPos,this.transform.position))*(swimAroundPos-this.transform.position)   );
-                if(direction!=Vector3.zero)
-                    transform.rotation= Quaternion.Slerp(transform.rotation,
-                                                        Quaternion.LookRotation(direction),
-                                                        rotationSpeed *Time.deltaTime ) ;
-            //Adding random jerk movement
-                direction.Set(direction[0]*Random.Range(-1,2),direction[1]*Random.Range(-1,2),direction[2]*Random.Range(-1,2));
-                if(direction!=Vector3.zero && Random.Range(0,5000)<10) 
-                    transform.rotation= Quaternion.Slerp(   transform.rotation,
-                                                            Quaternion.LookRotation(direction),
-                                                            rotationSpeed *Time.deltaTime ) ;
+                if(direction!=Vector3.zero){
+                    if (!(CelluoInputQuat==Quaternion.identity))
+                    {
+                        //Quaternion.Lerp : Averages Cellulo Input and Instinct behaviour ; for controlled robots swarm does not impact
+                        GoalQuat= Quaternion.Lerp(CelluoInputQuat,Quaternion.LookRotation(direction),0.0f);    
+                    }
+                    else{
+                        GoalQuat = Quaternion.LookRotation(direction);
+                    }
+                    if (amIcontrolled)
+                        transform.rotation= Quaternion.Slerp(transform.rotation,
+                                                        GoalQuat,
+                                                        RotationSpeed *Time.deltaTime ) ;
+                    else
+                        transform.rotation= Quaternion.Slerp(transform.rotation,
+                                                        GoalQuat,
+                                                        AutorotationSpeed *Time.deltaTime ) ;
+                }
+            // //Adding random jerk movement
+            //     direction.Set(direction[0]*Random.Range(-1,2),direction[1]*Random.Range(-1,2),direction[2]*Random.Range(-1,2));
+            //     if(direction!=Vector3.zero && Random.Range(0,5000)<10) 
+            //         transform.rotation= Quaternion.Slerp(   transform.rotation,
+            //                                                 Quaternion.LookRotation(direction),
+            //                                                 AutorotationSpeed *Time.deltaTime ) ;
             
+            speedAdjustment();
+/* 
+==========================
+Haptic Feedback Test code
+==========================
+*/         
+            Quaternion desired_rot=Quaternion.FromToRotation(transform.forward, direction.normalized);
+/*             print("Dot between Goal dir and forward : "+Vector3.Dot(direction.normalized,transform.forward)+
+            "\n Direction : "+Vector3.Normalize(direction)+
+            "\n Forward : "+Vector3.Normalize(transform.forward)
+            +"\n From To rot Euler : " +desired_rot.eulerAngles );
+            Debug.DrawRay(transform.position, desired_rot.eulerAngles, UnityEngine.Color.green);
+             */
+            if (DeBug || Vector3.Dot(direction.normalized,transform.forward)<0.85)
+            {
+                // print(this.gameObject.name+" ; Applying haptic brake");
+                determineBrakeDirection(desired_rot);
+            }
 
             return;
+
+            void speedAdjustment(){
+                //adjusts the speed if member of a centroid is far from the center (80% of max neighboor distance)
+                Vector3 GoalDir=centroidPos-this.transform.position;
+                if (GoalDir.sqrMagnitude>Mathf.Pow(neighbourDistance*0.8f,2f)){
+                    float mult=Vector3.Dot(this.transform.forward, GoalDir.normalized);
+                    speed=globalFlock.fishMaxSpeed*(0.9f+(0.1f*mult));
+                    return;
+                }
+                speed=globalFlock.fishMaxSpeed;
+                
+            }
         }
 
 
@@ -304,15 +362,34 @@ public class IndiFlock : MonoBehaviour
                 if(direction!=Vector3.zero)
                     transform.rotation= Quaternion.Slerp(transform.rotation,
                                                         Quaternion.LookRotation(direction),
-                                                        rotationSpeed *Time.deltaTime ) ;
+                                                        AutorotationSpeed *Time.deltaTime ) ;
                 direction.Set(direction[0]*Random.Range(-1,2),direction[1]*Random.Range(-1,2),direction[2]*Random.Range(-1,2));
-            //Adding random jerk movement
-                if(direction!=Vector3.zero && Random.Range(0,1000)<100) 
-                    transform.rotation= Quaternion.Slerp(   transform.rotation,
-                                                            Quaternion.LookRotation(direction),
-                                                            rotationSpeed *Time.deltaTime ) ;
+            // //Adding random jerk movement
+            //     if(direction!=Vector3.zero && Random.Range(0,1000)<100) 
+            //         transform.rotation= Quaternion.Slerp(   transform.rotation,
+            //                                                 Quaternion.LookRotation(direction),
+            //                                                 AutorotationSpeed *Time.deltaTime ) ;
             }
         }
 
     }
+
+    public bool DeBug;
+    public float A;
+    public float B;
+    public float C;
+
+    void determineBrakeDirection(Quaternion DesiredRot){
+        Vector3 EulerForm=DesiredRot.eulerAngles;
+        Vector3 forwardSample=Vector3.forward;
+        forwardSample= DesiredRot*forwardSample;
+
+        /* print(this.gameObject.name+" desired local heading "+forwardSample);
+        if (forwardSample[2]<0.9f)
+            print(this.gameObject.name+" needs to rotate"); */
+    }
+    public bool isControlled(){
+        return amIcontrolled;
+    }
+
 }
