@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SwarmInfo : MonoBehaviour
 {
-    public int initSwarmSize;
+    public int SwarmSize=10;
+    int StatSize=10;
     public GameObject prefab;
     public List<GameObject> swarm_entities;
     public GameObject[] SW_EN;
@@ -17,6 +19,7 @@ public class SwarmInfo : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        StatSize= globalFlock.swarmInitSize;
         swarm_transform=GameObject.Find("SwarmCenter").transform; //create GameObject SwarmCenter
         // for (i=0;i<initSwarmSize;initSwarmSize++){
         //     Vector3 pos = new Vector3(0+i%5,5,(i/5)%5);
@@ -26,13 +29,13 @@ public class SwarmInfo : MonoBehaviour
         //     swarm_entities.Add(test);
         //     obj.objects.Add(test);
         // }
-        
+        SwarmSizeInputField=GameObject.Find("SwarmSetSize");
     }
 
     // Update is called once per frame
     void Update()
     {
-        SW_EN = globalFlock.swarm_entities; //4.11 Update
+        SW_EN = globalFlock.swarm_entities; 
 
 
         swarm_transform.eulerAngles=getSwarmAngle();
@@ -165,4 +168,18 @@ public class SwarmInfo : MonoBehaviour
         return ret;
 
     }
+
+    public void swarmAdd(){
+        SwarmSize++;
+        SwarmSizeInputField.GetComponent<InputField>().text=SwarmSize.ToString();
+    }
+    public void swarmSub(){
+        SwarmSize--;
+        SwarmSizeInputField.GetComponent<InputField>().text=SwarmSize.ToString();
+    }
+    public GameObject SwarmSizeInputField;
+    public void setSwarmSizeFromUI(){
+        SwarmSize=int.Parse(SwarmSizeInputField.GetComponent<InputField>().text);
+    }
+
 }

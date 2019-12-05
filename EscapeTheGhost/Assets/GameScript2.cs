@@ -17,6 +17,7 @@ public class GameScript2 : MonoBehaviour
     {
        // SliderInitGUI();
         globalFlock=GameObject.Find("SimMasterInfo").GetComponent<globalFlock>();
+        toggleDebugUI();
 
         //Gmode = GameMode.None;
         //FoodPos.Set(200,40,400);
@@ -55,7 +56,8 @@ public class GameScript2 : MonoBehaviour
             activateGoal();
         }
         //  if(goalIsActive)
-        updateObjectiveIndicator();
+        if(FoodSphere!=null)
+            updateObjectiveIndicator();
         scoreCompute();
         if(IsGameOver()){
             if(FinalScore==0)
@@ -89,7 +91,7 @@ public class GameScript2 : MonoBehaviour
         setFish0CtrlToDebugCtrl();
     }
 
-    public Vector3 FoodPos=new Vector3(200,40,400);
+    public Vector3 FoodPos=new Vector3(200,40,500);
     public Vector3 GoalPos=new Vector3(200,40,600);
 
     public GameObject foodSpherePrefab;
@@ -207,17 +209,24 @@ public class GameScript2 : MonoBehaviour
             print("Debug Mode Toggled : "+OnOff);
             setFish0CtrlToDebugCtrl();
             globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().celluloLessDebug=DebugMode;
+            toggleDebugUI();
         }
 
     }
+    public CanvasGroup DebugUI;
 
+    void toggleDebugUI(){
+
+        DebugUI.interactable= DebugMode;
+        DebugUI.alpha = DebugMode ? 1:0 ;
+   }
     void setFish0CtrlToDebugCtrl(){
         globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().celluloLessDebug=DebugMode;
     }
 
-/*     GameObject UITarget;
-    Slider sliderX; 
-    Slider sliderY;
+    GameObject UITarget;
+    public Slider sliderX; 
+    public Slider sliderY;
     void SliderInitGUI(){
         sliderX=(Slider)GameObject.Find("CelluloXSlider").GetComponent<Slider>();
         sliderY=(Slider)GameObject.Find("CelluloYSlider").GetComponent<Slider>();
@@ -225,18 +234,20 @@ public class GameScript2 : MonoBehaviour
     public void SliderChangeGUI(){
         UITarget=globalFlock.swarm_entities[0];
         if (DebugMode){
-            UITarget.GetComponent<BasicBehaviourScriptCellulo>().debugCelluloX= sliderX.value;
-            UITarget.GetComponent<BasicBehaviourScriptCellulo>().debugCelluloY= sliderY.value;
+            UITarget.GetComponent<BasicBehaviourScriptCellulo>().debugCelluloX = sliderX.value;
+            UITarget.GetComponent<BasicBehaviourScriptCellulo>().debugCelluloY = sliderY.value;
         }
     }
- */
+
 
 
     public Texture2D icon;
     public Texture2D celluloIcon;
-    
     void OnGUI () 
     {
+        
+
+        
        /*  //GUI.Button (new Rect (10,10,100,20), new GUIContent ("Click me", icon, "This is the tooltip"));
         GUIStyle style;
         GUI.backgroundColor = Color.black;

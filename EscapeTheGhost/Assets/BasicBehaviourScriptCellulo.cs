@@ -39,18 +39,25 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
     public bool amIcontrolled=false;
     float initialCelluloTheta=0f;
     float horizontalToVerticalRotationAssistRatio=3;
-
+    public GameObject MasterInfo ;
+    bool CelluloInit =false;
     void Start()
     {
         //mSpeed=5;
-        Cellulo.initialize();
+        if(!CelluloInit){
+            Cellulo.initialize();
+            CelluloInit=true;
+        }
+        print("Cellulo initialized");
         if(robot != null) {
             robot.clearTracking();
         start_time=Time.time;
         CtrlMode=0;
         convertCoord= this.gameObject.GetComponent<LibDotsMapping>();
+        
         //isRunning=true;
-        //
+
+        MasterInfo=GameObject.Find("SimMasterInfo");
         }
     }
     // Update is called once per frame
@@ -64,12 +71,11 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
             celluloTheta=robot.getTheta()-initialCelluloTheta; //get the orientation of the robot - onConnect orientation
 //           Debug.Log("Pos value for Cellulo :"+robot.getID()+" is :"+currentRobotPos);
             float now = Time.time;
-//            Debug.Log(this.gameObject.GetComponent<LibDotsMapping>()); //returns null
+
             convertCoord= this.gameObject.GetComponent<LibDotsMapping>();
             celluloInput = convertCoord.libDotsConvertion(currentRobotPos[0],currentRobotPos[1],(int)CtrlMode);
 
-//            Debug.Log("Pos value for Cellulo :"+robot.getID()+" is : "+currentRobotPos+"\n Converted to joystick axis :"+celluloInput);
-            //if(!isRunning) return;
+
             robotVisualUpdate();
             GizmoOn = false;
             
@@ -120,7 +126,6 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
             celluloTheta=debugCelluloTheta;
 
         }
-        
         if (orientationControl && CtrlMode==Mode.Mono)
         {
         //Z Orientation Correction
@@ -183,10 +188,18 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
                 fromCurrToTheta=Quaternion.identity;
 
             transform.eulerAngles=new Vector3(clampXrot(transform.eulerAngles[0]),transform.eulerAngles[1],transform.eulerAngles[2]);
-
-
-            if (robot!=null || celluloLessDebug)
+            
+            if (robot!=null || celluloLessDebug){
                 this.GetComponent<IndiFlock>().CelluoInputQuat=XQuat*fromCurrToTheta;
+
+                if(robot!=null){
+                    //If controlled by cellulo ; Filter 
+                    MasterInfo.GetComponent<GameScript2>().sliderX.value=celluloInput[0]; 
+                    MasterInfo.GetComponent<GameScript2>().sliderY.value=celluloInput[1];
+                }
+                
+
+            }
             print((Quaternion.Euler(Xrotation)*fromCurrToTheta).eulerAngles);
         }
  
@@ -229,30 +242,29 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
         return eulerAngle;
     }
     void robotVisualUpdate(){
-        if (this.gameObject.GetComponent<IndiFlock>()!=null)
-            {
-                IndiFlock IDS =this.gameObject.GetComponent<IndiFlock>();
-                print("Cellulo Item with a IndiFlock found");
-                print("Color Sent bool = "+IDS.colorSent);
-            // k++;
-            // if (k>500)
-            //     IDS.colorSent=false;
-                if(IDS.colorSent)
-                    return;
-                robot.setVisualEffect(1, (long)(IDS.FishColor.getStripesRedValue()*0.7f) ,
-                                         (long)(IDS.FishColor.getStripesGreenValue()*0.7f) ,
-                                         (long)(IDS.FishColor.getStripesBlueValue()*0.7f) , 1);
-                robot.setVisualEffect(1, (long)(IDS.FishColor.getStripesRedValue()*0.7f) ,
-                                         (long)(IDS.FishColor.getStripesGreenValue()*0.7f) ,
-                                         (long)(IDS.FishColor.getStripesBlueValue()*0.7f) , 3);
-                robot.setVisualEffect(1, (long)(IDS.FishColor.getBodyRedValue()*0.7f) ,
-                                         (long)(IDS.FishColor.getBodyGreenValue()*0.7f) ,
-                                         (long)(IDS.FishColor.getBodyBlueValue()*0.7f) , 2);                                            
-                //stripes work, add body color too from IndiFlock
-                //Aura enable
-                IDS.colorSent=true;
-                
-            }
+        if (this.gameObject.GetComponent<IndiFlock>()!=null && robot!=null)
+        {
+            IndiFlock IDS =this.gameObject.GetComponent<IndiFlock>();
+            print("Cellulo Item with a IndiFlock found");
+            print("Color Sent bool = "+IDS.colorSent);
+        // k++;
+        // if (k>500)
+        //     IDS.colorSent=false;
+            if(IDS.colorSent)
+                return;
+            robot.setVisualEffect(1, (long)(IDS.FishColor.getStripesRedValue()*0.7f) ,
+                                        (long)(IDS.FishColor.getStripesGreenValue()*0.7f) ,
+                                        (long)(IDS.FishColor.getStripesBlueValue()*0.7f) , 1);
+            robot.setVisualEffect(1, (long)(IDS.FishColor.getStripesRedValue()*0.7f) ,
+                                        (long)(IDS.FishColor.getStripesGreenValue()*0.7f) ,
+                                        (long)(IDS.FishColor.getStripesBlueValue()*0.7f) , 3);
+            robot.setVisualEffect(1, (long)(IDS.FishColor.getBodyRedValue()*0.7f) ,
+                                        (long)(IDS.FishColor.getBodyGreenValue()*0.7f) ,
+                                        (long)(IDS.FishColor.getBodyBlueValue()*0.7f) , 2);                                            
+            //stripes work, add body color too from IndiFlock
+            IDS.colorSent=true;
+            
+        }
 
     }
     void OnDrawGizmos(){
@@ -260,7 +272,6 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
         if (amIcontrolled)
             Gizmos.color = Color.red;
         Gizmos.DrawSphere(transform.position, 0.5f);
-
     }
     void amIcontrolledUpdate(){
          if(robot != null || celluloLessDebug)

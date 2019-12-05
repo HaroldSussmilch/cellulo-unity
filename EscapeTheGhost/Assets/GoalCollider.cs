@@ -9,7 +9,6 @@ public class GoalCollider : MonoBehaviour
         if(!isActive)
             return;
         if(other.name.Contains("Fish")){  //check if it is a fish
-            print ("Goal COLLIDER ENTER");
             other.gameObject.GetComponentInParent<IndiFlock>().GoalReached=true;
  
         }

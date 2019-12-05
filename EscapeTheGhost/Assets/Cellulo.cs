@@ -20,8 +20,12 @@ public class Cellulo {
 
     // disconnect from robot on exit
     ~Cellulo() {
-        destroyRobot(id);
-         Debug.Log("destroying cellulo robot");
+        Debug.Log("trying to destroy cellulo robot");
+        if (id!=0)
+            destroyRobot(id);
+        else
+            Debug.Log("Robot id was 0, not deleted");
+
     }
     // INIT Library, must call a bit before connecting
     [DllImport ("Plugin")]
@@ -210,12 +214,8 @@ public class Cellulo {
         return id;
     }
 
-        void OnDisable()
-    {
-#if !UNITY_EDITOR
-        CancelInvoke();
-        StopAllCoroutines();
-#endif
+    void killRobo(long robot){
+        //set ID to 0
     }
 
 }
