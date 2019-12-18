@@ -8,11 +8,11 @@ public class globalFlock : MonoBehaviour
 {
     
     public static int swarmInitSize=10;     //Number of fishes (played and unplayed)
-    public static GameObject[] swarm_entities;  //Array as number of fishes is static
+    public static List<GameObject> swarm_entities;  //Array as number of fishes is static
 
     //public static int controlledUnits=1;
     public static List<GameObject> players;
-    public GameObject[]  Publicswarm_entities;
+    public List<GameObject>  Publicswarm_entities;
     public static Vector3 spawnPos = new Vector3(10,5,10);
     public static float spawnRadius=30f; 
     public GameObject fishPrefab;
@@ -29,12 +29,18 @@ public class globalFlock : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
-        swarm_entities=new GameObject[swarmInitSize];
+        if (swarm_entities==null)
+        {
+           swarm_entities =new List<GameObject>();
+        }
+        swarm_entities.Clear();
+
         if(!spawnOn){
             // swarm_entities[0]=GameObject.Find("Cube1");
             // return;   
         }
         spawnPos.Set(50f,25f,10f);
+
         for (int i = 0; i< swarmInitSize ; i++){
 
             Vector3 pos = new Vector3(  Random.Range(-spawnRadius,spawnRadius),
@@ -43,11 +49,12 @@ public class globalFlock : MonoBehaviour
             pos=sphereSpawnRange();
             pos+=spawnPos;
 
-            swarm_entities[i]= (GameObject) Instantiate(fishPrefab,pos,Quaternion.identity);
-            //TODO : fishPrefab = prefabVariantsArray[i];
-                //swarm_entities[i].Renderer.material.mainTexture=newTexture;
+            GameObject new_swarm_entities= (GameObject) Instantiate(fishPrefab,pos,Quaternion.identity);
+            // : fishPrefab = prefabVariantsArray[i];
+                //new_swarm_entities.Renderer.material.mainTexture=newTexture;
             int j=i+1;
-            swarm_entities[i].name="Fish n°"+j;
+            new_swarm_entities.name="Fish n°"+j;
+            swarm_entities.Add(new_swarm_entities);
             goalPos.Set(250f,50f,150f);
         }
     }
@@ -55,6 +62,7 @@ public class globalFlock : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         CelluloRotationSpeed=manualRotationSpeed;
         swarmInitSize= this.gameObject.GetComponent<SwarmInfo>().SwarmSize;
         fishMaxSpeed=Speed;//this.gameObject.GetComponent<SwarmInfo>().moveSpeed;

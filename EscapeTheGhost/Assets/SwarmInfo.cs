@@ -10,7 +10,7 @@ public class SwarmInfo : MonoBehaviour
     int StartSize=10;
     public GameObject prefab;
     public List<GameObject> swarm_entities;
-    public GameObject[] SW_EN;
+    public List<GameObject> SW_EN;
     public List<GameObject> players ;
     public Transform swarm_transform ;   //contains pos and orientation
     public float ac_coef =5f;
@@ -39,7 +39,7 @@ public class SwarmInfo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        SW_EN = globalFlock.swarm_entities; 
+        SW_EN = globalFlock.swarm_entities; //TODO  ;  TODO
        // rotSpeed=rotationSpeed;
 
 
@@ -78,7 +78,7 @@ public class SwarmInfo : MonoBehaviour
             return total_angle;  */       
        // SW_EN Version : 
        total_angle= Vector3.zero;     
-       for (int i=0 ;i<SW_EN.Length;i++){
+       for (int i=0 ;i<SW_EN.Count;i++){
            for (int j=0;j<3;j++){
                if (SW_EN[i].transform.eulerAngles[j]<180 || SW_EN[i].transform.eulerAngles[j]<0)
                 {
@@ -89,7 +89,7 @@ public class SwarmInfo : MonoBehaviour
            }
               //objects[i].transform.eulerAngles for degrees ; rotation for quat
         }
-        total_angle/=SW_EN.Length;
+        total_angle/=SW_EN.Count;
         return total_angle;
     }
 
@@ -111,7 +111,7 @@ public class SwarmInfo : MonoBehaviour
             return total_angle; */
         // SW_EN Version : 
         total_angle= 0;
-        for (int i=0 ;i<SW_EN.Length;i++){
+        for (int i=0 ;i<SW_EN.Count;i++){
             if (SW_EN[i].transform.eulerAngles.y<180 || SW_EN[i].transform.eulerAngles.y<0)
             {
                 total_angle+=SW_EN[i].transform.eulerAngles.y;
@@ -119,7 +119,7 @@ public class SwarmInfo : MonoBehaviour
             else 
                 total_angle+=SW_EN[i].transform.eulerAngles.y-360;
         }
-        total_angle/=SW_EN.Length;
+        total_angle/=SW_EN.Count;
 
         return total_angle;
     }
@@ -136,10 +136,10 @@ public class SwarmInfo : MonoBehaviour
             return total_pos; */
         // SW_EN Version : 
         total_pos = Vector3.zero;
-        for (int i=0 ;i<SW_EN.Length;i++){
+        for (int i=0 ;i<SW_EN.Count;i++){
             total_pos+=SW_EN[i].transform.position;           
         }
-        total_pos/=SW_EN.Length;
+        total_pos/=SW_EN.Count;
 
         return total_pos;
     }
@@ -198,7 +198,7 @@ public class SwarmInfo : MonoBehaviour
     }
     public Vector3 getSwarmForward(){
         Vector3 sumVector=Vector3.zero;
-        for (int i=0 ;i<SW_EN.Length;i++){
+        for (int i=0 ;i<SW_EN.Count;i++){
             sumVector+=SW_EN[i].transform.forward;
         }
         sumVector.Normalize();

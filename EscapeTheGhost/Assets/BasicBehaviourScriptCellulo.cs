@@ -286,7 +286,6 @@ float ShortestAngleDistance(float from,float to){
          IEnumerator PrevThetaDelayer(float seconds,float theta){
         yield return new WaitForSeconds(seconds);
         prevTheta=theta;
-        Debug.Log("Prev Theta = "+theta+ " current theta = "+celluloTheta);
     } 
     float prevTheta;
     float getPrevTheta(){

@@ -34,7 +34,7 @@ public class GameScript2 : MonoBehaviour
     void Update()
     {
         if (UITarget==null)
-            UITarget=globalFlock.swarm_entities[0];
+            UITarget=globalFlock.swarm_entities[0]; //TODO
 
         if (Input.GetKeyDown(KeyCode.R)){
             ResetGame();
@@ -130,7 +130,7 @@ public class GameScript2 : MonoBehaviour
         globalFlock.Start();
         setFish0CtrlToDebugCtrl();
         Camera m_MainCamera=Camera.main;
-        m_MainCamera.transform.position=globalFlock.swarm_entities[0].transform.position;
+        m_MainCamera.transform.position=globalFlock.swarm_entities[0].transform.position; //TODO
     }
 
     public Vector3 FoodPos=new Vector3(200,40,500);
@@ -248,7 +248,7 @@ public class GameScript2 : MonoBehaviour
             string OnOff=DebugMode ? "ON" : "OFF";
 
             print("Debug Mode Toggled : "+OnOff);
-            if(globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().robot==null)
+            if(globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().robot==null) //TODO
                 setFish0CtrlToDebugCtrl();
             toggleDebugUI();
         }
@@ -261,7 +261,7 @@ public class GameScript2 : MonoBehaviour
         DebugUI.alpha = DebugMode ? 1:0 ;
         DebugInfo=GameObject.Find("DebugInfo");
    }
-    void setFish0CtrlToDebugCtrl(){
+    void setFish0CtrlToDebugCtrl(){ //TODO
         globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().celluloLessDebug=DebugMode;
         globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().MoveMode=(BasicBehaviourScriptCellulo.ControlMode)
                             GameObject.Find("ControlModeDropdown").GetComponent<TMP_Dropdown>().value;
@@ -275,7 +275,7 @@ public class GameScript2 : MonoBehaviour
         sliderY=(Slider)GameObject.Find("CelluloYSlider").GetComponent<Slider>();
     }
     public void SliderChangeGUI(){
-        UITarget=globalFlock.swarm_entities[0];
+        UITarget=globalFlock.swarm_entities[0]; //TODO
         if (DebugMode){
             UITarget.GetComponent<BasicBehaviourScriptCellulo>().debugCelluloX = sliderX.value;
             UITarget.GetComponent<BasicBehaviourScriptCellulo>().debugCelluloY = sliderY.value;

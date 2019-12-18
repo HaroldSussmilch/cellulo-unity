@@ -28,7 +28,7 @@ public class MultiPlayerCameraScript : MonoBehaviour
 
     void Update()
     {
-        if((masterInfo.SW_version && masterInfo.SW_EN.Length!=objects.Count)||objects[0]==null)
+        if((masterInfo.SW_version && masterInfo.SW_EN.Count!=objects.Count)||objects[0]==null)
         {
             objects.Clear();    
             foreach (GameObject GO in masterInfo.SW_EN)

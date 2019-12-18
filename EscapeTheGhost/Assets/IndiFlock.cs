@@ -222,8 +222,8 @@ public class IndiFlock : MonoBehaviour
         }
     }
     void ApplyFlockingRules() {
-        GameObject[] gos;
-        gos = globalFlock.swarm_entities;
+        List<GameObject> gos;
+        gos = globalFlock.swarm_entities; 
 
         Vector3 vcentre=Vector3.zero;
         Vector3 vavoid=Vector3.zero;
