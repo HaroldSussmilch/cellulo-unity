@@ -6,7 +6,7 @@ using System.Drawing;
 public class IndiFlock : MonoBehaviour
 {
     public float speed;
-    float AutorotationSpeed=4.5f;
+    float AutorotationSpeed=3.5f;
     Vector3 averageHeading;
     Vector3 averagePosition;
     float neighbourDistance=45.0f;
@@ -144,7 +144,8 @@ public class IndiFlock : MonoBehaviour
     public float RotationSpeed;
     public bool foodGotten=false;
     public bool GoalReached=false;
-
+    public float forwardSpeedModfier=1;
+    public bool helpImLost=false;
     // Start is called before the first frame update
     void Start()
     {
@@ -154,11 +155,14 @@ public class IndiFlock : MonoBehaviour
         colorSent=false;
         CelluoInputQuat=Quaternion.identity;
         RotationSpeed=AutorotationSpeed;
+        forwardSpeedModfier=1;
+        previousFrameTransform=this.transform;
     }
 
     // Update is called once per frame
     void Update()
     {
+        RotationSpeed=globalFlock.CelluloRotationSpeed;
         AutorotationSpeed=globalFlock.AutorotationSpeed;
         amIcontrolled=this.gameObject.GetComponent<BasicBehaviourScriptCellulo>().amIcontrolled;
         if (FishColor!=null)
@@ -188,7 +192,7 @@ public class IndiFlock : MonoBehaviour
 
         toggleAura();
 
-        
+        randomTeleportFix();
 
     }
 
@@ -245,18 +249,27 @@ public class IndiFlock : MonoBehaviour
         
 
         void ApplyRuleSet2(){
-
+            
             //Heading Method
+            int playerNum=0;
             Vector3 centroidPos=Vector3.zero;
-
+            Vector3 playerPos=Vector3.zero;
+            bool playerInNeighboorhood=false;
             foreach (GameObject go in gos){
                 if(go!=this.gameObject){
+                    if(go.GetComponent<BasicBehaviourScriptCellulo>().amIcontrolled==true)    playerNum++;
                     dist = Vector3.Distance(go.transform.position,this.transform.position);
                     if(dist<=neighbourDistance){
                         centroidPos+=(go.transform.position); //direction centre
                         groupSize++;
                         if(dist < 10.0f){
                             vavoid+= (this.transform.position - go.transform.position)/(dist*0.2f);
+                        }
+                        if(go.GetComponent<BasicBehaviourScriptCellulo>().amIcontrolled==true){ //if controller swarm have higher weight for following
+                            centroidPos+=(4*go.transform.position);
+                            groupSize+=4;
+                            playerInNeighboorhood=true;
+                            playerPos=go.transform.position;
                         }
                     //    IndiFlock anotherFlock = go.GetComponent<IndiFlock>();
                     //    gSpeed = gSpeed + anotherFlock.speed;
@@ -267,29 +280,56 @@ public class IndiFlock : MonoBehaviour
             {
                 centroidPos/=groupSize;
             }
-                
-                Vector3 swimAroundPos= new Vector3(120f,20f,750f);
-                Vector3 direction = (   3f*(centroidPos-this.transform.position) +
-                                        1f*vavoid  +
-                                        0.01f*Mathf.Min(10,Vector3.Distance(swimAroundPos,this.transform.position))*(swimAroundPos-this.transform.position)   );
-                if(direction!=Vector3.zero){
-                    if (!(CelluoInputQuat==Quaternion.identity))
-                    {
-                        //Quaternion.Lerp : Averages Cellulo Input and Instinct behaviour ; for controlled robots swarm does not impact
-                        GoalQuat= Quaternion.Lerp(CelluoInputQuat,Quaternion.LookRotation(direction),0.0f);    
+            bool needToSwimToPlayer=false;
+            if(playerInNeighboorhood==false){
+                foreach (GameObject go in gos){
+                    if(go.GetComponent<BasicBehaviourScriptCellulo>().amIcontrolled==true){
+                        playerPos=go.transform.position;
+                        needToSwimToPlayer=true;
                     }
-                    else{
-                        GoalQuat = Quaternion.LookRotation(direction);
-                    }
-                    if (amIcontrolled)
-                        transform.rotation= Quaternion.Slerp(transform.rotation,
-                                                        GoalQuat,
-                                                        RotationSpeed *Time.deltaTime ) ;
-                    else
-                        transform.rotation= Quaternion.Slerp(transform.rotation,
-                                                        GoalQuat,
-                                                        AutorotationSpeed *Time.deltaTime ) ;
                 }
+            }            
+            //GoalPos
+            Vector3 swimAroundPos= new Vector3(120f,20f,750f);
+            float swimAroundCoef= 0.0001f;
+            
+            Vector3 direction = (   3f*(centroidPos-this.transform.position) +
+                                    1f*vavoid  +
+                                    swimAroundCoef*Mathf.Min(10,Vector3.Distance(swimAroundPos,this.transform.position))*(swimAroundPos-this.transform.position)   );
+            if(!playerInNeighboorhood && playerNum>0){
+                swimAroundPos=playerPos;
+                direction=swimAroundPos-this.transform.position;
+            }
+            if(direction!=Vector3.zero ||amIcontrolled){
+                if (!(CelluoInputQuat==Quaternion.identity))
+                {
+                    //Quaternion.Lerp : Averages Cellulo Input and Instinct behaviour ; for controlled robots swarm does not impact
+                    GoalQuat=CelluoInputQuat;   //Quaternion.Lerp(CelluoInputQuat,Quaternion.LookRotation(direction),0.0f);
+                    
+    
+                }
+                else{
+                    GoalQuat = Quaternion.LookRotation(direction);
+                }
+                
+                if (amIcontrolled){
+                    if(helpImLost){
+                        Vector3 swarmCenterPosition=GameObject.Find("SwarmCenter").transform.position;
+                        GoalQuat=Quaternion.LookRotation(swarmCenterPosition-this.transform.position);
+                    }
+
+                    //Add to Behaviour script for speed phi theta
+                    transform.rotation= Quaternion.Slerp(transform.rotation,
+                                                    GoalQuat,
+                                                    RotationSpeed *25*Time.deltaTime ) ;
+
+                }
+
+                else
+                    transform.rotation= Quaternion.Slerp(transform.rotation,
+                                                    GoalQuat,
+                                                    AutorotationSpeed *Time.deltaTime ) ;
+            }
             // //Adding random jerk movement
             //     direction.Set(direction[0]*Random.Range(-1,2),direction[1]*Random.Range(-1,2),direction[2]*Random.Range(-1,2));
             //     if(direction!=Vector3.zero && Random.Range(0,5000)<10) 
@@ -327,6 +367,8 @@ Haptic Feedback Test code
                     return;
                 }
                 speed=globalFlock.fishMaxSpeed;
+                if (amIcontrolled)
+                    speed=globalFlock.fishMaxSpeed * forwardSpeedModfier;
                 
             }
         }
@@ -391,5 +433,15 @@ Haptic Feedback Test code
     public bool isControlled(){
         return amIcontrolled;
     }
-
+    Transform previousFrameTransform;
+    void randomTeleportFix(){
+        Vector3 previous_pos= previousFrameTransform.position;
+        float distMagnitude=(previous_pos-this.transform.position).sqrMagnitude;
+        if(distMagnitude>10000){
+            Debug.LogWarning("Warning random teleport occurred but was fixed");
+            this.transform.position=previousFrameTransform.position;
+            this.transform.rotation=previousFrameTransform.rotation;
+        }
+        previousFrameTransform=this.transform;
+    }
 }

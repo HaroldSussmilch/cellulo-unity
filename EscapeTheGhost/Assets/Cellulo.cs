@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 public class Cellulo {
     // id inside the library
     private long id;
-    
+    public bool hapticOn=false;
     // constructor: connect to robot
     public Cellulo()
     {
@@ -16,13 +16,15 @@ public class Cellulo {
             Debug.Log("WARNING: using zero pointer as a Cellulo object. It means that Cellulo object creation failed.");
             return;
         }
+        hapticOn=false;
     }
 
     // disconnect from robot on exit
     ~Cellulo() {
         Debug.Log("trying to destroy cellulo robot");
         if (id!=0)
-            destroyRobot(id);
+            Debug.Log("robot destroyed");
+            //destroyRobot(id);
         else
             Debug.Log("Robot id was 0, not deleted");
 
@@ -214,8 +216,17 @@ public class Cellulo {
         return id;
     }
 
-    void killRobo(long robot){
-        //set ID to 0
+    public void killRobot(){
+         if(id == 0) {
+            Debug.Log("Robot is broken (connection to pool failed). Cannot kill robot");
+            return;
+        }
+        else 
+        {
+            Debug.Log("kill robot: Robot id is"+id);
+        }
+        //destroyRobot(id);
+        id=0;
     }
 
 }

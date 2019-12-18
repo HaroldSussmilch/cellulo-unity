@@ -198,3 +198,5 @@ int64_t totalRobots()
         return 0;
     return client->robots_N;
 }
+
+

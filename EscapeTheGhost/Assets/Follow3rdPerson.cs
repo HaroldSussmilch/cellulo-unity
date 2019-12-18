@@ -27,20 +27,25 @@ public class Follow3rdPerson : MonoBehaviour
         info=GameObject.Find("SimMasterInfo").GetComponent<SwarmInfo>();
     }
 
+/*     private void Update() {
+        //if player too far from swarm center, lookAt = player ?
+    } */
     private void LateUpdate(){
-        lookAt=swarmCenter.transform;
+        //lookAt=swarmCenter.transform;
         Vector3 dir = Vector3.zero;
         dir.Set(0f,cameraHeight,-distance);
         //currentX=swarmCenter.eulerAngles[0];
         //yRotation=swarmCenter.eulerAngles[1];
         float Yrot=info.getSwarmYrotation();
 
-        Vector3 rot2= Vector3.zero;
-        rot2.Set(0,Yrot,0) ; 
+/*         Vector3 rot2= Vector3.zero;
+        rot2.Set(0,Yrot,0) ;  */
         
+
+//Correct Camera position
         Quaternion rotation = Quaternion.Euler(0,Yrot,0);
-        camTransform.position = Vector3.Lerp(camTransform.position,lookAt.position + rotation * dir,Time.deltaTime*1.9f) ; //lookAt.position + rotation * dir;
-        theta = Mathf.Atan(cameraHeight/distance) * Mathf.Rad2Deg;  
+       // camTransform.position = Vector3.Lerp(camTransform.position,lookAt.position + rotation * dir,Time.deltaTime*1.9f) ; //lookAt.position + rotation * dir;
+        /* theta = Mathf.Atan(cameraHeight/distance) * Mathf.Rad2Deg;  
         Vector3 thetaX=Vector3.zero;
         thetaX.Set(theta,0,0);   
         //camTransform.eulerAngles = rot2 + thetaX ;
@@ -48,7 +53,9 @@ public class Follow3rdPerson : MonoBehaviour
         //print(rot2);
         rotation = Quaternion.Euler(rot2);
         //Debug.Log("Dist = "+distance+" Height= "+cameraHeight+" theta (deg) = "+theta+"\n rotation (euler) = "+rot2);
-        camTransform.rotation = Quaternion.Slerp(camTransform.rotation, rotation, Time.deltaTime*0.9f);
+        camTransform.rotation = Quaternion.Slerp(camTransform.rotation, rotation, Time.deltaTime*0.9f); */
+        camTransform.position = Vector3.Lerp(camTransform.position,lookAt.position - (lookAt.rotation*Vector3.forward )*distance ,Time.deltaTime*1.9f) ;
+        camTransform.LookAt(swarmCenter.transform);
         return;
 
 

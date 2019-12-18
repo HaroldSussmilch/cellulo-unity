@@ -2,6 +2,8 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
+    <CscToolPath>/media/harold/DiskLinux/UnityInstall/2019.2.12f1/Editor/Data/Tools/RoslynScripts</CscToolPath>
+    <CscToolExe>unity_csc.sh</CscToolExe>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -45,6 +47,14 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="UnityEngine">
+      <HintPath>/media/harold/DiskLinux/UnityInstall/2019.2.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor">
+      <HintPath>/media/harold/DiskLinux/UnityInstall/2019.2.12f1/Editor/Data/Managed/UnityEditor.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
      <Compile Include="Assets\BasicBehaviourScript.cs" />
      <Compile Include="Assets\BasicBehaviourScriptCellulo.cs" />
      <Compile Include="Assets\CameraFogScript.cs" />
@@ -53,6 +63,7 @@
      <Compile Include="Assets\Caustics\causticsProjector.cs" />
      <Compile Include="Assets\Cellulo.cs" />
      <Compile Include="Assets\CelluloCollider.cs" />
+     <Compile Include="Assets\CelluloTracker.cs" />
      <Compile Include="Assets\FishModels\MaterialMods.cs" />
      <Compile Include="Assets\Follow3rdPerson.cs" />
      <Compile Include="Assets\FoodCollider.cs" />
@@ -65,6 +76,7 @@
      <Compile Include="Assets\LibDotsMapping.cs" />
      <Compile Include="Assets\MultiPlayerCameraScript.cs" />
      <Compile Include="Assets\NewBehaviourScript.cs" />
+     <Compile Include="Assets\PredatorAvoidance.cs" />
      <Compile Include="Assets\RockVR\Common\Scripts\EventDelegate.cs" />
      <Compile Include="Assets\RockVR\Common\Scripts\FPSDisplay.cs" />
      <Compile Include="Assets\RockVR\Common\Scripts\Platform.cs" />
@@ -92,6 +104,7 @@
      <Compile Include="Assets\SurfaceCopyPositionScript.cs" />
      <Compile Include="Assets\swarmBehaviourScript.cs" />
      <Compile Include="Assets\SwarmInfo.cs" />
+     <Compile Include="Assets\WaterSurfaceCollider.cs" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
      <None Include="Assets\Samples\Polybrush\1.0.1\Shader Examples (Standard)\Shader\StandardVertexColor.shader" />
@@ -198,9 +211,6 @@
  </Reference>
  <Reference Include="Unity.MemoryProfiler.Editor">
  <HintPath>/home/harold/Project-Files/cellulo-unity/EscapeTheGhost/Library/ScriptAssemblies/Unity.MemoryProfiler.Editor.dll</HintPath>
- </Reference>
- <Reference Include="UnityEngine">
- <HintPath>/media/harold/DiskLinux/UnityInstall/2019.2.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AIModule">
  <HintPath>/media/harold/DiskLinux/UnityInstall/2019.2.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -378,9 +388,6 @@
  </Reference>
  <Reference Include="UnityEngine.XRModule">
  <HintPath>/media/harold/DiskLinux/UnityInstall/2019.2.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.XRModule.dll</HintPath>
- </Reference>
- <Reference Include="UnityEditor">
- <HintPath>/media/harold/DiskLinux/UnityInstall/2019.2.12f1/Editor/Data/Managed/UnityEditor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Analytics.StandardEvents">
  <HintPath>/home/harold/Project-Files/cellulo-unity/EscapeTheGhost/Library/PackageCache/com.unity.analytics@3.3.2/Unity.Analytics.StandardEvents.dll</HintPath>
@@ -751,12 +758,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{63BF5ED4-61FF-2F4A-BC48-BB78E0DC0C5D}</Project>
+      <Project>{DFEDF65F-3529-76F6-F1F6-F872B7FCD445}</Project>
       <Name>Assembly-CSharp-firstpass</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

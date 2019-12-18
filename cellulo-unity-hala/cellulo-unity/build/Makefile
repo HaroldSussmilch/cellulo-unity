@@ -12,7 +12,7 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DBT_MULTIADAPTER_SUPPORT -DCELLULOUNITY_LIBRARY -DQT_DEPRECATED_WARNINGS -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_BLUETOOTH_LIB -DQT_CORE_LIB
+DEFINES       = -DCELLULOUNITY_LIBRARY -DQT_DEPRECATED_WARNINGS -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_BLUETOOTH_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -D_REENTRANT -Wall -W -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++11 -D_REENTRANT -Wall -W -fPIC $(DEFINES)
 INCPATH       = -I../../cellulo-unity -I. -I../../../cellulo-core/qml-cellulo/src -I../../../cellulo-core/qml-cellulo/include -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtQuick -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtQml -I/opt/Qt/5.11.1/gcc_64/include/QtNetwork -I/opt/Qt/5.11.1/gcc_64/include/QtBluetooth -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -isystem /usr/include/libdrm -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++
@@ -35,10 +35,10 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = cellulo-unity1.0.0
-DISTDIR = /home/halakhodr/cellulo/cellulo-unity/cellulo-unity/build/.tmp/cellulo-unity1.0.0
+DISTDIR = /home/harold/Project-Files/cellulo-unity/cellulo-unity-hala/cellulo-unity/build/.tmp/cellulo-unity1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/opt/Qt/5.11.1/gcc_64/lib -Wl,-rpath-link,/opt/Qt/5.11.1/gcc_64/lib -shared -Wl,-soname,libcellulo-unity.so.1
-LIBS          = $(SUBLIBS) -lcelluloplugin -L/opt/Qt/5.11.1/gcc_64/qml/Cellulo -L./ -lbluetooth -L/opt/Qt/5.11.1/gcc_64/lib -lQt5Quick -lQt5Gui -lQt5Qml -lQt5Network -lQt5Bluetooth -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -lcelluloplugin -L/opt/Qt/5.11.1/gcc_64/qml/Cellulo -L./ -L/opt/Qt/5.11.1/gcc_64/lib -lQt5Quick -lQt5Gui -lQt5Qml -lQt5Network -lQt5Bluetooth -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -102,14 +102,10 @@ DIST          = /opt/Qt/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_bluetooth.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_bluetooth_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_bootstrap_private.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_charts.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_charts_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_concurrent.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_concurrent_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_core.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_core_private.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_datavisualization.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_datavisualization_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_dbus.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_dbus_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_designer.pri \
@@ -156,8 +152,6 @@ DIST          = /opt/Qt/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_positioningquick_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_printsupport.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_printsupport_private.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_purchasing.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_purchasing_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_qml.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_qml_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_qmldebug_private.pri \
@@ -312,14 +306,10 @@ Makefile: ../cellulo-unity.pro /opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++/qmake.con
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_bluetooth.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_bluetooth_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_bootstrap_private.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_charts.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_charts_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_concurrent.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_concurrent_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_core.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_core_private.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_datavisualization.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_datavisualization_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_dbus.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_dbus_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_designer.pri \
@@ -366,8 +356,6 @@ Makefile: ../cellulo-unity.pro /opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++/qmake.con
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_positioningquick_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_printsupport.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_printsupport_private.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_purchasing.pri \
-		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_purchasing_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_qml.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_qml_private.pri \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_qmldebug_private.pri \
@@ -492,14 +480,10 @@ Makefile: ../cellulo-unity.pro /opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++/qmake.con
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_bluetooth.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_bluetooth_private.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_bootstrap_private.pri:
-/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_charts.pri:
-/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_charts_private.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_concurrent.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_concurrent_private.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_core.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_core_private.pri:
-/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_datavisualization.pri:
-/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_datavisualization_private.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_dbus.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_dbus_private.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_designer.pri:
@@ -546,8 +530,6 @@ Makefile: ../cellulo-unity.pro /opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++/qmake.con
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_positioningquick_private.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_printsupport.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_printsupport_private.pri:
-/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_purchasing.pri:
-/opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_purchasing_private.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_qml.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_qml_private.pri:
 /opt/Qt/5.11.1/gcc_64/mkspecs/modules/qt_lib_qmldebug_private.pri:
@@ -749,7 +731,7 @@ moc_cellulothread.cpp: /opt/Qt/5.11.1/gcc_64/include/QtCore/QThread \
 		../cellulothread.h \
 		moc_predefs.h \
 		/opt/Qt/5.11.1/gcc_64/bin/moc
-	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/halakhodr/cellulo/cellulo-unity/cellulo-unity -I/home/halakhodr/cellulo/cellulo-core/qml-cellulo/src -I/home/halakhodr/cellulo/cellulo-core/qml-cellulo/include -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtQuick -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtQml -I/opt/Qt/5.11.1/gcc_64/include/QtNetwork -I/opt/Qt/5.11.1/gcc_64/include/QtBluetooth -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../cellulothread.h -o moc_cellulothread.cpp
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/harold/Project-Files/cellulo-unity/cellulo-unity-hala/cellulo-unity -I/home/harold/Project-Files/cellulo-unity/cellulo-core/qml-cellulo/src -I/home/harold/Project-Files/cellulo-unity/cellulo-core/qml-cellulo/include -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtQuick -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtQml -I/opt/Qt/5.11.1/gcc_64/include/QtNetwork -I/opt/Qt/5.11.1/gcc_64/include/QtBluetooth -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../cellulothread.h -o moc_cellulothread.cpp
 
 moc_cellulorobotwrapper.cpp: /opt/Qt/5.11.1/gcc_64/include/QtCore/QTimer \
 		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtimer.h \
@@ -946,7 +928,7 @@ moc_cellulorobotwrapper.cpp: /opt/Qt/5.11.1/gcc_64/include/QtCore/QTimer \
 		../cellulorobotwrapper.h \
 		moc_predefs.h \
 		/opt/Qt/5.11.1/gcc_64/bin/moc
-	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/halakhodr/cellulo/cellulo-unity/cellulo-unity -I/home/halakhodr/cellulo/cellulo-core/qml-cellulo/src -I/home/halakhodr/cellulo/cellulo-core/qml-cellulo/include -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtQuick -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtQml -I/opt/Qt/5.11.1/gcc_64/include/QtNetwork -I/opt/Qt/5.11.1/gcc_64/include/QtBluetooth -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../cellulorobotwrapper.h -o moc_cellulorobotwrapper.cpp
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/harold/Project-Files/cellulo-unity/cellulo-unity-hala/cellulo-unity -I/home/harold/Project-Files/cellulo-unity/cellulo-core/qml-cellulo/src -I/home/harold/Project-Files/cellulo-unity/cellulo-core/qml-cellulo/include -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtQuick -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtQml -I/opt/Qt/5.11.1/gcc_64/include/QtNetwork -I/opt/Qt/5.11.1/gcc_64/include/QtBluetooth -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../cellulorobotwrapper.h -o moc_cellulorobotwrapper.cpp
 
 moc_cellulopoolclient.cpp: /opt/Qt/5.11.1/gcc_64/include/QtCore/QtCore \
 		/opt/Qt/5.11.1/gcc_64/include/QtCore/QtCoreDepends \
@@ -1249,7 +1231,7 @@ moc_cellulopoolclient.cpp: /opt/Qt/5.11.1/gcc_64/include/QtCore/QtCore \
 		../cellulopoolclient.h \
 		moc_predefs.h \
 		/opt/Qt/5.11.1/gcc_64/bin/moc
-	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/halakhodr/cellulo/cellulo-unity/cellulo-unity -I/home/halakhodr/cellulo/cellulo-core/qml-cellulo/src -I/home/halakhodr/cellulo/cellulo-core/qml-cellulo/include -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtQuick -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtQml -I/opt/Qt/5.11.1/gcc_64/include/QtNetwork -I/opt/Qt/5.11.1/gcc_64/include/QtBluetooth -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../cellulopoolclient.h -o moc_cellulopoolclient.cpp
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/harold/Project-Files/cellulo-unity/cellulo-unity-hala/cellulo-unity -I/home/harold/Project-Files/cellulo-unity/cellulo-core/qml-cellulo/src -I/home/harold/Project-Files/cellulo-unity/cellulo-core/qml-cellulo/include -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtQuick -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtQml -I/opt/Qt/5.11.1/gcc_64/include/QtNetwork -I/opt/Qt/5.11.1/gcc_64/include/QtBluetooth -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../cellulopoolclient.h -o moc_cellulopoolclient.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:

@@ -5,21 +5,27 @@ using UnityEngine;
 public class globalFlock : MonoBehaviour
 {
     
-    public static int swarmInitSize=5;     //Number of fishes (played and unplayed)
-    public static GameObject[] swarm_entities=new GameObject[swarmInitSize];  //Array as number of fishes is static
+    public static int swarmInitSize=10;     //Number of fishes (played and unplayed)
+    public static GameObject[] swarm_entities;  //Array as number of fishes is static
 
     public static int controlledUnits=1;
     public static List<GameObject> players;
+    public GameObject[]  Publicswarm_entities;
     public static Vector3 spawnPos = new Vector3(10,5,10);
     public static float spawnRadius=10f; 
+    public float Speed=3f;
     public GameObject fishPrefab;
     public static float fishMaxSpeed=3f;
+    public static float AutorotationSpeed=3f;
+    public  float AutoFlockRotSpeed=3f;
+
     [SerializeField]
     public static Vector3 goalPos;
     public bool spawnOn = true;
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
+        swarm_entities=new GameObject[swarmInitSize];
         if(!spawnOn){
             // swarm_entities[0]=GameObject.Find("Cube1");
             // return;   
@@ -36,6 +42,8 @@ public class globalFlock : MonoBehaviour
             swarm_entities[i]= (GameObject) Instantiate(fishPrefab,pos,Quaternion.identity);
             //TODO : fishPrefab = prefabVariantsArray[i];
                 //swarm_entities[i].Renderer.material.mainTexture=newTexture;
+            int j=i+1;
+            swarm_entities[i].name="Fish n°"+j;
             goalPos.Set(250f,50f,150f);
         }
     }
@@ -43,7 +51,11 @@ public class globalFlock : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        goalPos=goalPos+Vector3.forward;
+        swarmInitSize= this.gameObject.GetComponent<SwarmInfo>().SwarmSize;
+        fishMaxSpeed=Speed;//this.gameObject.GetComponent<SwarmInfo>().moveSpeed;
+        AutorotationSpeed=AutoFlockRotSpeed;
+        //goalPos;
+        Publicswarm_entities=swarm_entities;
     }
 
     Vector3 sphereSpawnRange(){
@@ -55,4 +67,8 @@ public class globalFlock : MonoBehaviour
                         r*Mathf.Sin(theta)*Mathf.Sin(phi),
                         r*Mathf.Cos(theta));
     }
+    void DynamicSwarmSize(){
+        //if()
+    }
+
 }

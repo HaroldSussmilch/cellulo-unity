@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameScript2 : MonoBehaviour
 {
@@ -13,20 +14,28 @@ public class GameScript2 : MonoBehaviour
     globalFlock globalFlock;
     float start_time=0;
     int scoreStart=1000;
+    GameObject UIMaincanvas;
+    GameObject SwarmSizeInputField;
     void Start()
     {
+        UIMaincanvas=GameObject.Find("Canvas");
        // SliderInitGUI();
         globalFlock=GameObject.Find("SimMasterInfo").GetComponent<globalFlock>();
         toggleDebugUI();
 
         //Gmode = GameMode.None;
         //FoodPos.Set(200,40,400);
-        
+
+        SwarmSizeInputField=GameObject.Find("SwarmSetSize");
+        SwarmSizeInputField.GetComponent<InputField>().text=globalFlock.swarmInitSize.ToString();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (UITarget==null)
+            UITarget=globalFlock.swarm_entities[0];
+
         if (Input.GetKeyDown(KeyCode.R)){
             ResetGame();
         }
@@ -35,7 +44,29 @@ public class GameScript2 : MonoBehaviour
     public void ResetGame(){
         print("Reset button pressed ");
         GameInit();
+        SwarmSizeInputField.GetComponent<InputField>().text=globalFlock.swarmInitSize.ToString();
+
+        PauseSimAMoment();
     }
+
+    float[] storedSpeeds;
+    public void  PauseSimAMoment(){
+        if(globalFlock.Speed!=0 && globalFlock.AutoFlockRotSpeed!=0 && globalFlock.manualRotationSpeed!=0)
+            //protection against multiple resets
+            storedSpeeds=new float[3] {globalFlock.fishMaxSpeed,globalFlock.AutorotationSpeed,globalFlock.CelluloRotationSpeed};
+        globalFlock.Speed=0;
+        globalFlock.AutoFlockRotSpeed=0;
+        globalFlock.manualRotationSpeed=0;
+
+        Invoke("restoreSpeeds", 2.5f);
+    }
+    void restoreSpeeds(){
+        globalFlock.Speed=storedSpeeds[0];
+        globalFlock.AutoFlockRotSpeed=storedSpeeds[1];
+        globalFlock.manualRotationSpeed=storedSpeeds[2];
+
+    }
+
     IndiFlock GOscript;
     int FinalScore=0;
     void gameUpdate(){
@@ -59,15 +90,23 @@ public class GameScript2 : MonoBehaviour
         if(FoodSphere!=null)
             updateObjectiveIndicator();
         scoreCompute();
+        if(!(UIMaincanvas.GetComponent<Text>().text.Contains("Game Over")))
+            UIMaincanvas.GetComponent<Text>().text=score.ToString();
+        DebugInfoUpdate();
         if(IsGameOver()){
-            if(FinalScore==0)
+            if(FinalScore==0){
                 FinalScore=score;
+                float elapsedTime=Time.time-start_time;
+                UIMaincanvas.GetComponent<Text>().text="Game Over \n Final Score : "+FinalScore+ "\n Total time : "+elapsedTime;
+                }
+            
         }
         
     }
     void GameInit(){
         scoreInit();
         resetSwarmPos();
+        UIMaincanvas.GetComponent<Text>().text="Start Game !";
         switch ((int)Gmode){
             case (int)GameMode.None:
                 return;
@@ -86,9 +125,12 @@ public class GameScript2 : MonoBehaviour
         {
             //Destroy gameObject + call start ?
             Destroy(GO);
+            if(GO.GetComponent<BasicBehaviourScriptCellulo>().robot!=null)GO.GetComponent<BasicBehaviourScriptCellulo>().robot.clearTracking ();
         }
         globalFlock.Start();
         setFish0CtrlToDebugCtrl();
+        Camera m_MainCamera=Camera.main;
+        m_MainCamera.transform.position=globalFlock.swarm_entities[0].transform.position;
     }
 
     public Vector3 FoodPos=new Vector3(200,40,500);
@@ -176,7 +218,6 @@ public class GameScript2 : MonoBehaviour
         }
         int foodScore=50;
         score=scoreStart-(int)(Time.time-start_time)+fishThatAte*foodScore;
-       // print(score);
     }
     bool IsGameOver(){
         int total1=0;
@@ -207,21 +248,23 @@ public class GameScript2 : MonoBehaviour
             string OnOff=DebugMode ? "ON" : "OFF";
 
             print("Debug Mode Toggled : "+OnOff);
-            setFish0CtrlToDebugCtrl();
-            globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().celluloLessDebug=DebugMode;
+            if(globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().robot==null)
+                setFish0CtrlToDebugCtrl();
             toggleDebugUI();
         }
-
     }
     public CanvasGroup DebugUI;
-
+    GameObject DebugInfo;
     void toggleDebugUI(){
 
         DebugUI.interactable= DebugMode;
         DebugUI.alpha = DebugMode ? 1:0 ;
+        DebugInfo=GameObject.Find("DebugInfo");
    }
     void setFish0CtrlToDebugCtrl(){
         globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().celluloLessDebug=DebugMode;
+        globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().MoveMode=(BasicBehaviourScriptCellulo.ControlMode)
+                            GameObject.Find("ControlModeDropdown").GetComponent<TMP_Dropdown>().value;
     }
 
     GameObject UITarget;
@@ -239,40 +282,14 @@ public class GameScript2 : MonoBehaviour
         }
     }
 
-
-
-    public Texture2D icon;
-    public Texture2D celluloIcon;
-    void OnGUI () 
-    {
-        
-
-        
-       /*  //GUI.Button (new Rect (10,10,100,20), new GUIContent ("Click me", icon, "This is the tooltip"));
-        GUIStyle style;
-        GUI.backgroundColor = Color.black;
-        GUI.contentColor = Color.black;
-        if (GUI.Button (new Rect (10,10,40,40), new GUIContent ("", icon, "Reset Game"))) 
-        {
-            // This code is executed when the Button is clicked
-            ResetGame();
-            
+    public void DebugInfoUpdate(){
+        BasicBehaviourScriptCellulo CelluloScript =UITarget.GetComponent<BasicBehaviourScriptCellulo>();
+        if(CelluloScript.amIcontrolled){
+            string str="Cellulo Input X,Y,Theta : "+CelluloScript.DebugInputLog;
+            DebugInfo.GetComponent<TMP_Text>().text=str; 
         }
-        GUI.Label (new Rect (10,10+40,80,20), GUI.tooltip);
-        string ScoreDisplayString="Score : "+score.ToString();
-        ScoreDisplayString = GUI.TextField (new Rect ((Screen.width / 2)-50, 5, 100, 30), ScoreDisplayString);
-        GUI.Button (new Rect (10,Screen.height-10-40,40,40), new GUIContent ("", celluloIcon, "Remaining robots = "+Cellulo.robotsRemaining()+ "\n Robots in pool ="+Cellulo.totalRobots()));
-        GUI.Label (new Rect (10,Screen.height-10-40*2,120,40), GUI.tooltip);
- */
-
-
-
-    /*     if(IsGameOver()){
-            string EndDisplayString = "Game over \n Final Score ="+score;
-            EndDisplayString = GUI.TextField (new Rect ((Screen.width / 2)-50, Screen.height/2, 150, 60), EndDisplayString);
-
-        } */
     }
+
 }
 
 

@@ -10,7 +10,7 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
 
    // private Space relativeTo=Space.World;
     public float mSpeed;
-    public float rotSpeed=0.5f;
+    public float rotSpeed=2.5f;
         public Cellulo robot;
     float start_time;
     //bool isRunning;
@@ -26,12 +26,19 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
     public enum ModeMvmt {RotateModel,GoToGoal};
     public ModeMvmt MoveMode = ModeMvmt.RotateModel;
     int k=0;
+    bool GizmoOn=true;
 
     public bool celluloLessDebug=false;
     [Range(-1f,1f)]
     public float debugCelluloX;
     [Range(-1f,1f)]
     public float debugCelluloY;
+    [Range(0f,360f)]
+    public float debugCelluloTheta;
+    public bool orientationControl=true;
+    public bool amIcontrolled=false;
+    float initialCelluloTheta=0f;
+    float horizontalToVerticalRotationAssistRatio=3;
 
     void Start()
     {
@@ -49,9 +56,12 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        amIcontrolledUpdate();
         Vector3 celluloInput=Vector3.zero;
+        float celluloTheta=0f;
         if(robot != null) {
             currentRobotPos.Set(robot.getX(), robot.getY(), 10.0f);
+            celluloTheta=robot.getTheta()-initialCelluloTheta; //get the orientation of the robot - onConnect orientation
 //           Debug.Log("Pos value for Cellulo :"+robot.getID()+" is :"+currentRobotPos);
             float now = Time.time;
 //            Debug.Log(this.gameObject.GetComponent<LibDotsMapping>()); //returns null
@@ -61,13 +71,14 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
 //            Debug.Log("Pos value for Cellulo :"+robot.getID()+" is : "+currentRobotPos+"\n Converted to joystick axis :"+celluloInput);
             //if(!isRunning) return;
             robotVisualUpdate();
+            GizmoOn = false;
             
         }
         else {
             k++;
-            if (k>500){ //soften load on Unity Editor;
+            if (k>200){ //soften load on Unity Editor;
                 k=0;
-                if(Cellulo.robotsRemaining() >= 1) connect();
+                if(Cellulo.robotsRemaining() >= 1 && false) connect();
                 else
                 {
                     Debug.Log("Remaining robots < 1"+ "\n Robots in pool ="+Cellulo.totalRobots());
@@ -102,52 +113,92 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
         transform.Translate(mSpeed*Input.GetAxis("Horizontal")*Time.deltaTime,mSpeed*Input.GetAxis("Vertical")*Time.deltaTime,mSpeed*Input.GetAxis("Depth")*Time.deltaTime, camTransform);
         
         //Cellulo input controls
-        bool orientationControl=true;
-        
+
         if (celluloLessDebug){
             celluloInput[0]=debugCelluloX;
             celluloInput[1]=debugCelluloY;
+            celluloTheta=debugCelluloTheta;
 
         }
         
         if (orientationControl && CtrlMode==Mode.Mono)
         {
         //Z Orientation Correction
-            if (Mathf.Abs(transform.eulerAngles[2])>0.5){
-                celluloInput[2]=Mathf.Sign(transform.eulerAngles[2]-180)*Mathf.Max(10f,1f/(0.001f+0.0002f*Mathf.Abs(transform.eulerAngles[2]-180)));
-//                print(1f/(0.0002f*Mathf.Abs(transform.eulerAngles[2]-180)));
-            }
-            else
-            {
-               transform.eulerAngles=new Vector3(transform.eulerAngles[0], transform.eulerAngles[1], 0);
-            }
+            realignZOrientation();
 
         //Intuitive Joystick Input Swap
             celluloInput=swapInput(celluloInput); //Rotations around X axis means changes in YZ plane and Z=0 so in Y direction
 
-
+            celluloInput[1]*=horizontalToVerticalRotationAssistRatio;
+;     //Rotation modifier for turning faster in horizontal plane
             celluloInput[0]=-celluloInput[0]; //positive X is down (left handed axis in Unity)
 //            print("oriCtrl (X rot, Y rot)"+celluloInput); //debug
 
-        //If Idle, slowly go back to horizontal plane movement
-            if (Mathf.Abs(celluloInput[0])<0.2f && transform.eulerAngles[0]>0.1)
+            //If Idle, slowly go back to horizontal plane movement
+            int XrotInput=0;
+            if (Mathf.Abs(celluloInput[XrotInput])<0.2f && transform.eulerAngles[0]>0.1)
             {
-                celluloInput[0]=Mathf.Sign(transform.eulerAngles[0]-180)*0.45f; // Rotation around X (side) back to 0 slowly if idle
+                celluloInput[XrotInput]=Mathf.Sign(transform.eulerAngles[0]-180)*0.45f; // Rotation around X (side) back to 0 slowly if idle
                 if (transform.eulerAngles[0]<1)
                     transform.eulerAngles=new Vector3(0, transform.eulerAngles[1], transform.eulerAngles[2]);
             }
 
             this.transform.Rotate(celluloInput*rotSpeed*Time.deltaTime);
             transform.eulerAngles=new Vector3(clampXrot(transform.eulerAngles[0]),transform.eulerAngles[1],transform.eulerAngles[2]);            //clamp rotation to [-90;90]
-
+            if (robot!=null ||celluloLessDebug)
+                this.GetComponent<IndiFlock>().CelluoInputQuat=this.transform.rotation;
         }
         else
         {
-            print("translate ctrl"+celluloInput);
-            transform.Translate(mSpeed*celluloInput*Time.deltaTime, camTransform);
+            //print("Ctrl mode 2"+celluloInput);
+            /*Controlls are :   X : speed variation : max at 0 (velocity control)
+                                Y : Create Rotation around X (side) axis (angular velocity control)
+                                Theta : Set fish Theta (angle control)
+                                */
+            float baseSpeed=mSpeed;
+            baseSpeed*=1f-(0.9f*Mathf.Abs(celluloInput[0]));
+
+            celluloInput[1]*=-1; //Inverse Y controlls
+
+            //TODO : On Low Cellulo[1], restore rotX to 0 slowly
+            int XrotInput=1;
+            if (Mathf.Abs(celluloInput[XrotInput])<0.2f && transform.eulerAngles[0]>0.1)
+            {
+                celluloInput[XrotInput]=Mathf.Sign(transform.eulerAngles[0]-180)*0.45f; // Rotation around X (side) back to 0 slowly if idle
+                if (transform.eulerAngles[0]<1)
+                    transform.eulerAngles=new Vector3(0, transform.eulerAngles[1], transform.eulerAngles[2]);
+            }
+            //  
+            Vector3 Xrotation=Vector3.zero;
+            Xrotation[0]=celluloInput[1];
+            Quaternion XQuat=Quaternion.Euler(Xrotation);
+            XQuat.SetLookRotation(XQuat*this.transform.forward);
+
+            Quaternion celluloThetaRot= Quaternion.Euler(new Vector3(0,celluloTheta,0));
+            Quaternion fromCurrToTheta=Quaternion.identity;
+            // Sets the rotation so that the transform's y-axis goes along the z-axis
+            fromCurrToTheta = Quaternion.FromToRotation(transform.forward, celluloThetaRot*Vector3.forward);
+
+            if(celluloTheta<1f) //rotation of <1° mess quaternion generation
+                fromCurrToTheta=Quaternion.identity;
+
+            transform.eulerAngles=new Vector3(clampXrot(transform.eulerAngles[0]),transform.eulerAngles[1],transform.eulerAngles[2]);
+
+
+            if (robot!=null || celluloLessDebug)
+                this.GetComponent<IndiFlock>().CelluoInputQuat=XQuat*fromCurrToTheta;
+            print((Quaternion.Euler(Xrotation)*fromCurrToTheta).eulerAngles);
         }
-        transform.Translate(0,0,Time.deltaTime * 5*mSpeed); //swim forward
-        //transform.Translate(mSpeed*Time.deltaTime*localTranslate[0],mSpeed*Time.deltaTime*localTranslate[1],mSpeed*Time.deltaTime*localTranslate[2], Space.World);
+ 
+        void realignZOrientation(){
+            if (Mathf.Abs(transform.eulerAngles[2])>0.5){
+                celluloInput[2]=Mathf.Sign(transform.eulerAngles[2]-180)*Mathf.Max(10f,1f/(0.001f+0.0002f*Mathf.Abs(transform.eulerAngles[2]-180)));
+            }
+            else
+            {
+                transform.eulerAngles=new Vector3(transform.eulerAngles[0], transform.eulerAngles[1], 0);
+            }
+        }
 
     }
 
@@ -156,6 +207,7 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
 
         robot = new Cellulo(); // just taking new robot from the pool or failing
         Debug.Log("Robot connection to pool tried "+"\n"+"New value is :"+robot);
+        initialCelluloTheta=robot.getTheta();
     }
 
     Vector3 swapInput(Vector3 celluloInput){
@@ -203,4 +255,20 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
             }
 
     }
+    void OnDrawGizmos(){
+        Gizmos.color = Color.yellow;
+        if (amIcontrolled)
+            Gizmos.color = Color.red;
+        Gizmos.DrawSphere(transform.position, 0.5f);
+
+    }
+    void amIcontrolledUpdate(){
+         if(robot != null || celluloLessDebug)
+            amIcontrolled=true;
+        else 
+            amIcontrolled=false;
+    }
+
+
+
 }

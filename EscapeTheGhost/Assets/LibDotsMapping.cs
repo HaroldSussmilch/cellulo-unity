@@ -15,9 +15,13 @@ public class LibDotsMapping : MonoBehaviour
     // {
         
     // }
+    [SerializeField]
     int minX;
+    [SerializeField]
     int maxX;
+    [SerializeField]
     int minY;
+    [SerializeField]
     int maxY;
     int rangeX;
     int rangeY;
@@ -28,27 +32,70 @@ public class LibDotsMapping : MonoBehaviour
     float Y_pos;
     [Range(0.0f,0.5f)]
     public float deadZoneThreshold = 0.05f;
+    public enum ScalingMode {Linear,Exponential,Steps};
+    public ScalingMode controlMode = ScalingMode.Linear;
+    public enum PaperFormat {A0,A1,A2,A3,A4}
+    PaperFormat format=PaperFormat.A3;
 
 
-    public Vector3 libDotsConvertion(float X, float Y, int CtrlMode){
+    public Vector3 libDotsConvertion(float X, float Y, int MappingMode){
         //Converts X,Y libdots coordinates
         //TODO : mode is int, string might be more clear
-
+    //A3 : 297 × 420 mm
+        format=(PaperFormat) GameObject.Find("PaperTypeDropDown").GetComponent<TMPro.TMP_Dropdown>().value;  
         X_pos=X;
         Y_pos=Y;
-        minX=25;
-        minY=-40;
-        maxX=410;
-        maxY=-265;
+        switch ((int)format)
+        {
+            case(int)PaperFormat.A0:
+                minX=0;
+                minY=0;
+                maxX=1189;
+                maxY=-841;
+                break;
+            case(int)PaperFormat.A1:
+                minX=0;
+                minY=0;
+                maxX=841;
+                maxY=-594;
+                break;
+            case(int)PaperFormat.A2:
+                minX=0;
+                minY=0;
+                maxX=594;
+                maxY=-420;
+                break;
+            case(int)PaperFormat.A3:
+                minX=0;
+                minY=0;
+                maxX=420;
+                maxY=-297;
+                break;
+            case(int)PaperFormat.A4:
+                minX=0;
+                minY=0;
+                maxX=297;
+                maxY=-210;
+                break;
+            default:
+                minX=0;
+                minY=0;
+                maxX=420;
+                maxY=-297;
+                break;
+        }
+        addCelluloOffet();
+
+
         Vector3 returnVector =  Vector3.zero;
-        switch (CtrlMode){
+        switch (MappingMode){
             case 0: //Mono Joystick type : [-1,1] ; mode forward speed Cst + rotation around Y(up) and X(side) local axis
                 //Libdot range : [25,-40] -> [410, -265]
                 nb_zones=1;
-                minX=25;
+/*                 minX=25;
                 minY=-40;
                 maxX=410;
-                maxY=-280;
+                maxY=-277; */
 
                 computerange();
                 //TODO :
@@ -89,9 +136,9 @@ public class LibDotsMapping : MonoBehaviour
                 returnVector[2]=0;
                 break;
         }
-        string controlMode="discreet";
+        //string controlMode="exp";
 
-        if (controlMode=="exp") //for exponential movement controll on cellulo
+        if (controlMode==ScalingMode.Exponential) //for exponential movement controll on cellulo
         {
             returnVector=ExpNormalized(returnVector);
         }
@@ -109,12 +156,13 @@ public class LibDotsMapping : MonoBehaviour
             returnVector[1]=(int)returnVector[1];
         if(Mathf.Abs(returnVector[2])>1)
             returnVector[2]=(int)returnVector[2];
-        if(controlMode=="linear")
+        if(controlMode==ScalingMode.Linear)
             return returnVector;
-        if (controlMode=="discreet")
+        if (controlMode==ScalingMode.Steps)
         {
             returnVector=discretizeVector(returnVector);
         }
+
         return returnVector;
 
         
@@ -161,16 +209,26 @@ public class LibDotsMapping : MonoBehaviour
     Vector3 ExpNormalized(Vector3 returnVector){
         float expRange =3f;
         float expMin = 0;
-
+        float sign;
 
         for (int i=0;i<3;i++){
+            sign=Mathf.Sign(returnVector[i]);
+            returnVector[i]=Mathf.Abs(returnVector[i]);
             returnVector[i]*=expRange;
             returnVector[i]+=expMin;
             returnVector[i]=Mathf.Exp(returnVector[i]) ;
             returnVector[i]-= Mathf.Exp(expMin);
-            returnVector[i]/=Mathf.Exp(expRange+expMin);
+            returnVector[i]/=Mathf.Exp(expRange+expMin-(expRange*0.1f));
+            returnVector[i]*=sign;
         }
         return returnVector;
     }
+    void addCelluloOffet(){
+        //Offsets the range of coordinates so that the -1 - 1 values are reachable 
+        minY-=10;
+        maxY+=10;
+        minX+=20;
+        maxX-=20;
 
+    }
 }

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class globalFlock : MonoBehaviour
 {
@@ -8,16 +10,18 @@ public class globalFlock : MonoBehaviour
     public static int swarmInitSize=10;     //Number of fishes (played and unplayed)
     public static GameObject[] swarm_entities;  //Array as number of fishes is static
 
-    public static int controlledUnits=1;
+    //public static int controlledUnits=1;
     public static List<GameObject> players;
     public GameObject[]  Publicswarm_entities;
     public static Vector3 spawnPos = new Vector3(10,5,10);
-    public static float spawnRadius=10f; 
-    public float Speed=3f;
+    public static float spawnRadius=30f; 
     public GameObject fishPrefab;
     public static float fishMaxSpeed=3f;
-    public static float AutorotationSpeed=3f;
-    public  float AutoFlockRotSpeed=3f;
+    public static float AutorotationSpeed=4f;
+    public static float CelluloRotationSpeed=4f;
+    public float Speed=3f;
+    public float manualRotationSpeed=4f;
+    public float AutoFlockRotSpeed=4f;
 
     [SerializeField]
     public static Vector3 goalPos;
@@ -47,10 +51,11 @@ public class globalFlock : MonoBehaviour
             goalPos.Set(250f,50f,150f);
         }
     }
-
+    
     // Update is called once per frame
     void Update()
     {
+        CelluloRotationSpeed=manualRotationSpeed;
         swarmInitSize= this.gameObject.GetComponent<SwarmInfo>().SwarmSize;
         fishMaxSpeed=Speed;//this.gameObject.GetComponent<SwarmInfo>().moveSpeed;
         AutorotationSpeed=AutoFlockRotSpeed;
@@ -71,4 +76,20 @@ public class globalFlock : MonoBehaviour
         //if()
     }
 
+    public void UIMappingModeChange(){
+
+        int val =GameObject.Find("MappingModeDropdown").GetComponent<TMPro.TMP_Dropdown>().value;
+
+        foreach(GameObject GO in swarm_entities){
+            GO.GetComponent<BasicBehaviourScriptCellulo>().MappingMode=(BasicBehaviourScriptCellulo.Mode) val;
+        }
+    }
+    public void UIControlModeChange(){
+
+        int val =GameObject.Find("ControlModeDropdown").GetComponent<TMPro.TMP_Dropdown>().value;
+
+        foreach(GameObject GO in swarm_entities){
+            GO.GetComponent<BasicBehaviourScriptCellulo>().MoveMode=(BasicBehaviourScriptCellulo.ControlMode) val;
+        }
+    }
 }

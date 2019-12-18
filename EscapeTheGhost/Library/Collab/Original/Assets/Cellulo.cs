@@ -20,11 +20,12 @@ public class Cellulo {
 
     // disconnect from robot on exit
     ~Cellulo() {
-        Debug.Log("Cellulo Destructor Called1");
-        destroyRobot(id);
-        Debug.Log("Cellulo Destructor Called2"+"\n Sleeping 5s");
-        System.Threading.Thread.Sleep(5000);
-        Debug.Log("Finished sleeping");
+        Debug.Log("trying to destroy cellulo robot");
+        if (id!=0)
+            Debug.Log("Robot Destroyed");
+            //destroyRobot(id);
+        else
+            Debug.Log("Robot id was 0, not deleted");
 
     }
     // INIT Library, must call a bit before connecting
@@ -212,6 +213,19 @@ public class Cellulo {
     }
     public long getID(){
         return id;
+    }
+
+     public void killRobot(){
+         if(id == 0) {
+            Debug.Log("Robot is broken (connection to pool failed). Cannot kill robot");
+            return;
+        }
+        else 
+        {
+            Debug.Log("kill robot: Robot id is"+id);
+        }
+        destroyRobot(id);
+        id=0;
     }
 
 }

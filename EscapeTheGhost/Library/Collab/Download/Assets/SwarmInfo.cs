@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SwarmInfo : MonoBehaviour
 {
-    public int initSwarmSize;
+    public int SwarmSize=10;
+    int StatSize=10;
     public GameObject prefab;
     public List<GameObject> swarm_entities;
     public GameObject[] SW_EN;
@@ -13,10 +15,13 @@ public class SwarmInfo : MonoBehaviour
     public float ac_coef =5f;
     public float cohesion_coef =5f;
     public float moveSpeed=10;
+    //public static float rotSpeed=5;
+    public float rotationSpeed=5;
     public bool SW_version =true ;
     // Start is called before the first frame update
     void Start()
     {
+        StatSize= globalFlock.swarmInitSize;
         swarm_transform=GameObject.Find("SwarmCenter").transform; //create GameObject SwarmCenter
         // for (i=0;i<initSwarmSize;initSwarmSize++){
         //     Vector3 pos = new Vector3(0+i%5,5,(i/5)%5);
@@ -26,14 +31,14 @@ public class SwarmInfo : MonoBehaviour
         //     swarm_entities.Add(test);
         //     obj.objects.Add(test);
         // }
-        
+        SwarmSizeInputField=GameObject.Find("SwarmSetSize");
     }
 
     // Update is called once per frame
     void Update()
     {
-        SW_EN = globalFlock.swarm_entities; //4.11 Update
-
+        SW_EN = globalFlock.swarm_entities; 
+       // rotSpeed=rotationSpeed;
 
         swarm_transform.eulerAngles=getSwarmAngle();
         swarm_transform.position=getSwarmCenter();
@@ -65,11 +70,17 @@ public class SwarmInfo : MonoBehaviour
         if (SW_version==false)
             return total_angle;        
        // SW_EN Version : 
-
+       total_angle= Vector3.zero;     
        for (int i=0 ;i<SW_EN.Length;i++){
-            total_angle.x+=SW_EN[i].transform.eulerAngles.x%360;
-            total_angle.y+=SW_EN[i].transform.eulerAngles.y%360;
-            total_angle.z+=SW_EN[i].transform.eulerAngles.z%360;  //objects[i].transform.eulerAngles for degrees ; rotation for quat
+           for (int j=0;j<3;j++){
+               if (SW_EN[i].transform.eulerAngles[j]<180 || SW_EN[i].transform.eulerAngles[j]<0)
+                {
+                    total_angle[j]+=SW_EN[i].transform.eulerAngles[j];
+                }
+                else 
+                    total_angle[j]+=SW_EN[i].transform.eulerAngles[j]-360;
+           }
+              //objects[i].transform.eulerAngles for degrees ; rotation for quat
         }
         total_angle/=SW_EN.Length;
         return total_angle;
@@ -78,9 +89,13 @@ public class SwarmInfo : MonoBehaviour
     public float getSwarmYrotation(){
 
     // Necessary fix for 3rd person camera : Unity recalculates the transform.rotation and does 180° Y-flips on negative X or Z
-
+        if (swarm_entities==null)
+            return 0f;
         float total_angle= 0;
         for (int i=0 ;i<swarm_entities.Count;i++){
+            if(swarm_entities[i]==null){
+                break;
+            }
             total_angle+=swarm_entities[i].transform.eulerAngles.y%360;
         }
         total_angle/=swarm_entities.Count;
@@ -90,7 +105,12 @@ public class SwarmInfo : MonoBehaviour
         // SW_EN Version : 
         total_angle= 0;
         for (int i=0 ;i<SW_EN.Length;i++){
-            total_angle+=SW_EN[i].transform.eulerAngles.y%360;
+            if (SW_EN[i].transform.eulerAngles.y<180 || SW_EN[i].transform.eulerAngles.y<0)
+            {
+                total_angle+=SW_EN[i].transform.eulerAngles.y;
+            }
+            else 
+                total_angle+=SW_EN[i].transform.eulerAngles.y-360;
         }
         total_angle/=SW_EN.Length;
 
@@ -108,6 +128,7 @@ public class SwarmInfo : MonoBehaviour
         if (SW_version==false)
             return total_pos;
         // SW_EN Version : 
+        total_pos = Vector3.zero;
         for (int i=0 ;i<SW_EN.Length;i++){
             total_pos+=SW_EN[i].transform.position;           
         }
@@ -149,4 +170,18 @@ public class SwarmInfo : MonoBehaviour
         return ret;
 
     }
+
+    public void swarmAdd(){
+        SwarmSize++;
+        SwarmSizeInputField.GetComponent<InputField>().text=SwarmSize.ToString();
+    }
+    public void swarmSub(){
+        SwarmSize--;
+        SwarmSizeInputField.GetComponent<InputField>().text=SwarmSize.ToString();
+    }
+    public GameObject SwarmSizeInputField;
+    public void setSwarmSizeFromUI(){
+        SwarmSize=int.Parse(SwarmSizeInputField.GetComponent<InputField>().text);
+    }
+
 }

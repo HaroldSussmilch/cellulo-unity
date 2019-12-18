@@ -22,7 +22,7 @@ public class Cellulo {
     ~Cellulo() {
         if(id!=0)
         {
-            destroyRobot(id);
+            //destroyRobot(id);
             Debug.Log("Destoyed " + id);
         }
         else {
