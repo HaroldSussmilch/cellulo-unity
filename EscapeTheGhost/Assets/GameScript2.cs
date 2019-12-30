@@ -16,13 +16,14 @@ public class GameScript2 : MonoBehaviour
     int scoreStart=1000;
     GameObject UIMaincanvas;
     GameObject SwarmSizeInputField;
+    public int Level=0;
     void Start()
     {
         UIMaincanvas=GameObject.Find("Canvas");
        // SliderInitGUI();
         globalFlock=GameObject.Find("SimMasterInfo").GetComponent<globalFlock>();
         toggleDebugUI();
-
+        LevelChosen();
         //Gmode = GameMode.None;
         //FoodPos.Set(200,40,400);
 
@@ -261,7 +262,7 @@ public class GameScript2 : MonoBehaviour
         DebugUI.alpha = DebugMode ? 1:0 ;
         DebugInfo=GameObject.Find("DebugInfo");
    }
-    void setFish0CtrlToDebugCtrl(){ //TODO
+    void setFish0CtrlToDebugCtrl(){ 
         globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().celluloLessDebug=DebugMode;
         globalFlock.swarm_entities[0].GetComponent<BasicBehaviourScriptCellulo>().MoveMode=(BasicBehaviourScriptCellulo.ControlMode)
                             GameObject.Find("ControlModeDropdown").GetComponent<TMP_Dropdown>().value;
@@ -275,7 +276,7 @@ public class GameScript2 : MonoBehaviour
         sliderY=(Slider)GameObject.Find("CelluloYSlider").GetComponent<Slider>();
     }
     public void SliderChangeGUI(){
-        UITarget=globalFlock.swarm_entities[0]; //TODO
+        UITarget=globalFlock.swarm_entities[0]; 
         if (DebugMode){
             UITarget.GetComponent<BasicBehaviourScriptCellulo>().debugCelluloX = sliderX.value;
             UITarget.GetComponent<BasicBehaviourScriptCellulo>().debugCelluloY = sliderY.value;
@@ -289,7 +290,47 @@ public class GameScript2 : MonoBehaviour
             DebugInfo.GetComponent<TMP_Text>().text=str; 
         }
     }
+    public void UIupdate(){
+        SwarmSizeInputField=GameObject.Find("SwarmSetSize");
+        SwarmSizeInputField.GetComponent<InputField>().text=GameObject.Find("SimMasterInfo").GetComponent<SwarmInfo>().SW_EN.Count.ToString();
+    }
+    public void LevelChosen(){
+        GameObject DropDown=GameObject.Find("LevelChoiceDropDown");
+        int newVal=DropDown.GetComponent<TMP_Dropdown>().value;
+        if(Level!=newVal){
+            Level=newVal;
+            SwarmInfo SwarmInfo=GameObject.Find("SimMasterInfo").GetComponent<SwarmInfo>();
+            if(!SwarmInfo.LevelUIisOn) SwarmInfo.levelSettingsShowToogle();
+            GameObject DropDown1=GameObject.Find("LevelDropDown1");
+            GameObject DropDown2=GameObject.Find("LevelDropDown2");
+            TMP_Text TextItem1=DropDown1.transform.GetChild(3).GetComponent<TMP_Text>();
+            TMP_Text TextItem2=DropDown2.transform.GetChild(3).GetComponent<TMP_Text>();
+            string text1="";
+            string text2="";
+            switch (Level)
+            {
+                case 0:
+                    //Level 0 : learning to move Around, no specific settings
+                    SwarmInfo.levelSettingsShowToogle();
+                    break;
+                case 1:
+                    text1="Spheres to reach :";
+                    text2="Spheres Size :";
+                    break;
+                case 2:
+                    text1="Predators Number :";
+                    text2="Predator Intelligence :";
 
+                    break;
+                default:
+                    Debug.LogWarning("Level does not exist");
+                    Level=0;
+                    break;
+            }
+            TextItem1.text=text1;
+            TextItem2.text=text2;
+        }
+    }
 }
 
 

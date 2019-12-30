@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 148095448695256471}
   - component: {fileID: 4054003707634689279}
   - component: {fileID: 7850773713431028892}
+  - component: {fileID: -8874565043167108729}
+  - component: {fileID: 659532682260595983}
   m_Layer: 0
   m_Name: TempPredator
   m_TagString: Predator
@@ -92,3 +94,30 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &-8874565043167108729
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3799635178567765052}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 10
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &659532682260595983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3799635178567765052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d820d354703e08ded99f0ba516a299ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Detection: {fileID: -8874565043167108729}
+  Collision: {fileID: 7850773713431028892}

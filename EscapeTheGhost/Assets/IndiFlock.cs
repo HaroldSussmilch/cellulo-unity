@@ -369,7 +369,9 @@ Haptic Feedback Test code
                 speed=globalFlock.fishMaxSpeed;
                 if (amIcontrolled)
                     speed=globalFlock.fishMaxSpeed * forwardSpeedModfier;
-                
+                if(helpImLost){
+                    speed=globalFlock.fishMaxSpeed*3f;
+                }
             }
         }
 
@@ -433,15 +435,17 @@ Haptic Feedback Test code
     public bool isControlled(){
         return amIcontrolled;
     }
+    Vector3 previousFrameposition;
     Transform previousFrameTransform;
     void randomTeleportFix(){
-        Vector3 previous_pos= previousFrameTransform.position;
+        Vector3 previous_pos= previousFrameposition;
         float distMagnitude=(previous_pos-this.transform.position).sqrMagnitude;
-        if(distMagnitude>10000){
+        if(distMagnitude>500*500){
             Debug.LogWarning("Warning random teleport occurred but was fixed");
-            this.transform.position=previousFrameTransform.position;
+            this.transform.position=previousFrameposition;
             this.transform.rotation=previousFrameTransform.rotation;
         }
-        previousFrameTransform=this.transform;
+        if(amIcontrolled)print(this.transform.position+" Compared to "+previousFrameposition);
+        previousFrameposition=this.transform.position;
     }
 }

@@ -22,13 +22,13 @@ public class MultiPlayerCameraScript : MonoBehaviour
     void Start(){
         cam = GetComponent<Camera>();
         masterInfo=GameObject.Find("SimMasterInfo").GetComponent<SwarmInfo>();
-        objects = masterInfo.swarm_entities;
+        objects = masterInfo.SW_EN;
         
     }
 
     void Update()
     {
-        if((masterInfo.SW_version && masterInfo.SW_EN.Count!=objects.Count)||objects[0]==null)
+        if((masterInfo.SW_version && masterInfo.SW_EN.Count!=objects.Count)||(objects.Count!=0)) 
         {
             objects.Clear();    
             foreach (GameObject GO in masterInfo.SW_EN)

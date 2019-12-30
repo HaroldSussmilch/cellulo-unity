@@ -179,12 +179,17 @@ public class SwarmInfo : MonoBehaviour
     }
  */
     public void swarmAdd(){
+        SwarmSize=SW_EN.Count;
         SwarmSize++;
         SwarmSizeInputField.GetComponent<InputField>().text=SwarmSize.ToString();
+        GameObject.Find("SimMasterInfo").GetComponent<globalFlock>().addFish();
     }
     public void swarmSub(){
+        SwarmSize=SW_EN.Count;
         SwarmSize--;
         SwarmSizeInputField.GetComponent<InputField>().text=SwarmSize.ToString();
+        GameObject.Find("SimMasterInfo").GetComponent<globalFlock>().removeFish();
+        
     }
     public GameObject SwarmSizeInputField;
     public void setSwarmSizeFromUI(){
@@ -225,5 +230,27 @@ public class SwarmInfo : MonoBehaviour
         color.a=IsOn?100:0;
         GameObject.Find("MacroSettings").GetComponent<Image>().color=color;
     }
+    static public bool LevelUIisOn=true;
+    public void levelSettingsShowToogle(){
+        GameObject ButtonGO =GameObject.Find("Display On/Off");
+        RectTransform Rtrans=ButtonGO.GetComponent<RectTransform>();
+        LevelUIisOn=LevelUIisOn?false:true; //Toggle
+        float angle =LevelUIisOn?90:270;
+        Vector3 eulerRot=new Vector3(0,0,angle);
+        Quaternion rot=Quaternion.identity;
+        rot.eulerAngles=eulerRot;
+        Rtrans.rotation=rot;
+        int offset=133;
+        int moveYby=LevelUIisOn?-offset:offset;
+        Rtrans.anchoredPosition= new Vector2(Rtrans.anchoredPosition[0]+moveYby,Rtrans.anchoredPosition[1]);
+
+        GameObject.Find("LevelDropDown1").transform.localScale=LevelUIisOn?new Vector3(1,1,1):new Vector3(0,0,0);
+        GameObject.Find("LevelDropDown2").transform.localScale=LevelUIisOn?new Vector3(1,1,1):new Vector3(0,0,0);
+        
+        Color color= GameObject.Find("LevelSettings").GetComponent<Image>().color;
+        color.a=LevelUIisOn?100:0;
+        GameObject.Find("LevelSettings").GetComponent<Image>().color=color;
+    }
+
 
 }

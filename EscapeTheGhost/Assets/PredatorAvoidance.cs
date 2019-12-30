@@ -16,8 +16,8 @@ public class PredatorAvoidance : MonoBehaviour
     {
         PredatorList.Clear();
         predatorInstantiation();
-        //SwarmCenter=GameObject.Find("SwarmCenter");
-                SwarmCenter=Instantiate(PredatorPrefab,spawnPosition+Vector3.back*10f,Quaternion.identity);
+        SwarmCenter=GameObject.Find("SwarmCenter");
+                
     }
     void Update()
     {
@@ -25,13 +25,21 @@ public class PredatorAvoidance : MonoBehaviour
         //PredatorArray=GameObject.FindGameObjectsWithTag("Predator");
         foreach(GameObject Pred in PredatorList){
             //Debug.Log(Pred.name);
-            Pred.transform.LookAt(SwarmCenter.transform,Vector3.up);
+            Transform LookAtTarget=getTarget(Pred);
+            Pred.transform.LookAt(LookAtTarget,Vector3.up);
+            Pred.transform.Translate(0,0,Time.deltaTime * 5);
+
         }
 
         
     }
 
+    Transform getTarget(GameObject Pred){
+        
 
+
+        return SwarmCenter.transform;
+    }
     public void predatorInstantiation(){
         
         int num = getPredatorNumber();
@@ -55,8 +63,30 @@ public class PredatorAvoidance : MonoBehaviour
     int getPredatorNumber(){
 
         /* if(getFromUI=true)
-            predNumber= [GetUIValue] */
+            predNumber= GameObject.Find("LevelDropDown1").GetComponent<TMP_Dropdown>().value; */
             
         return predNumber;
+    }
+
+
+    /// <summary>
+    /// OnCollisionEnter is called when this collider/rigidbody has begun
+    /// touching another rigidbody/collider.
+    /// </summary>
+    /// <param name="other">The Collision data associated with this collision.</param>
+    void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.name.Contains("Fish")){
+            //if fish not eaten
+                //kill other.gameObject;
+                //score -100
+        }
+    }
+    
+    void destroyPredators(){
+        foreach(GameObject Pred in PredatorList){
+            Destroy(Pred);
+        }
+        PredatorList.Clear();
     }
 }

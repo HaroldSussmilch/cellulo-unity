@@ -40,6 +40,7 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
     float horizontalToVerticalRotationAssistRatio=3f;
     public GameObject MasterInfo ;
     public GameObject TestGO ;
+    GameObject SwarmCenter;
 
     static bool CelluloInit =false;
     CelluloTracker CelluloTrakingScript;
@@ -60,12 +61,14 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
 
             MasterInfo=GameObject.Find("SimMasterInfo");
             TestGO=GameObject.Find("Test GO");
+            
         }
     }
     // Update is called once per frame
     public float celluloTheta=0f;
     public Vector3 celluloInput=Vector3.zero;
     public Vector3 DebugInputLog=Vector3.zero;
+    public bool AmIkidnapped=false;
     void Update()
     {
         if(MasterInfo==null){
@@ -107,18 +110,23 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
                 }
             }
         }
+        AmIkidnappedUpdate();
+        if(AmIkidnapped && (this.transform.position-GameObject.Find("SwarmCenter").transform.position).magnitude >50f){
+            Debug.Log("Distance to swarmCenter is : "+ (this.transform.position-GameObject.Find("SwarmCenter").transform.position).magnitude );
+            this.gameObject.GetComponent<IndiFlock>().helpImLost=true;
+        }
+        else{
+            this.gameObject.GetComponent<IndiFlock>().helpImLost=false;
+        }
 
-
-
-        GameObject cam3p=GameObject.Find("3rdPersonCamera");
+/*         GameObject cam3p=GameObject.Find("3rdPersonCamera");
         Transform camTransform =cam3p.transform;
         Vector3 CamXAngleCorrection = Vector3.zero;
         CamXAngleCorrection.Set(-camTransform.eulerAngles[0],0,0);
-        camTransform.Rotate(CamXAngleCorrection);
-        //transform.Translate(mSpeed*Input.GetAxis("Horizontal")*Time.deltaTime,0,mSpeed*Input.GetAxis("Depth")*Time.deltaTime, relativeTo);
-        //transform.Translate(mSpeed*Input.GetAxis("Horizontal")*Time.deltaTime,mSpeed*Input.GetAxis("Vertical")*Time.deltaTime,mSpeed*Input.GetAxis("Depth")*Time.deltaTime, camTransform);
+        camTransform.Rotate(CamXAngleCorrection); */
+
         
-        //Cellulo input controls 
+//Cellulo input controls 
 
         if (celluloLessDebug){
             celluloInput[0]=debugCelluloX;
@@ -126,7 +134,7 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
             celluloTheta=debugCelluloTheta;
         }
         if(robot!=null){
-            //If controlled by cellulo ; Filter 
+            //UI sliders take info from cellulo 
 
             MasterInfo.GetComponent<GameScript2>().sliderX.value=celluloInput[0]; 
             MasterInfo.GetComponent<GameScript2>().sliderY.value=celluloInput[1];
@@ -260,7 +268,8 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
 
         }
 
-
+        //if(robot!=null && predatorNearby)
+            
 
         void realignZOrientation(){
             if (Mathf.Abs(transform.eulerAngles[2])>0.5){
@@ -271,6 +280,7 @@ public class BasicBehaviourScriptCellulo : MonoBehaviour
                 transform.eulerAngles=new Vector3(transform.eulerAngles[0], transform.eulerAngles[1], 0);
             }
         }
+
 
     }
 
@@ -366,7 +376,7 @@ float ShortestAngleDistance(float from,float to){
         Gizmos.DrawSphere(transform.position, 0.5f); */
     }
     void amIcontrolledUpdate(){
-         if(robot != null || celluloLessDebug)
+        if(robot != null || celluloLessDebug)
             amIcontrolled=true;
         else 
             amIcontrolled=false;
@@ -423,6 +433,16 @@ float ShortestAngleDistance(float from,float to){
         rb.velocity=Vector3.zero;
         rb.ResetInertiaTensor();
         rb.ResetCenterOfMass();
+
+    }
+
+    void AmIkidnappedUpdate(){
+        if(robot != null){
+            bool Kidnapped = robot.getKidnapped();
+            AmIkidnapped=Kidnapped;
+        }
+        else 
+            AmIkidnapped=false;
 
     }
 }

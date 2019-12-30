@@ -5,7 +5,7 @@ using UnityEngine;
 public class WaterSurfaceCollider : MonoBehaviour
 {
     // Start is called before the first frame update
-    List<Rigidbody> Memory;
+    List<Rigidbody> Memory=new List<Rigidbody>() ;
     private void OnTriggerEnter(Collider other){
         print("Collision with : "+other.name);
         if(other.name.Contains("Fish n°")){  //check if it is a fish

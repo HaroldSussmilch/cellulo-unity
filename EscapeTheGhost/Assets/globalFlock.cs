@@ -22,6 +22,7 @@ public class globalFlock : MonoBehaviour
     public float Speed=3f;
     public float manualRotationSpeed=4f;
     public float AutoFlockRotSpeed=4f;
+    static int currentNumber;
 
     [SerializeField]
     public static Vector3 goalPos;
@@ -57,6 +58,7 @@ public class globalFlock : MonoBehaviour
             swarm_entities.Add(new_swarm_entities);
             goalPos.Set(250f,50f,150f);
         }
+        currentNumber=swarmInitSize+1;
     }
     
     // Update is called once per frame
@@ -72,7 +74,7 @@ public class globalFlock : MonoBehaviour
     }
 
     Vector3 sphereSpawnRange(){
-        float r = Random.Range(0,spawnRadius);
+        float r = Random.Range(spawnRadius/2,spawnRadius);
         float phi = Random.Range(0,2*Mathf.PI);
         float theta = Random.Range(0,Mathf.PI);
 
@@ -99,5 +101,24 @@ public class globalFlock : MonoBehaviour
         foreach(GameObject GO in swarm_entities){
             GO.GetComponent<BasicBehaviourScriptCellulo>().MoveMode=(BasicBehaviourScriptCellulo.ControlMode) val;
         }
+    }
+
+    public void addFish(){
+        Vector3 pos=GameObject.Find("SwarmCenter").transform.position+sphereSpawnRange();
+        GameObject new_swarm_entity= (GameObject) Instantiate(fishPrefab,pos,Quaternion.identity);
+
+        new_swarm_entity.name="Fish n°"+currentNumber;
+        swarm_entities.Add(new_swarm_entity);
+        currentNumber++;
+    }
+
+    
+     public void removeFish(){
+        currentNumber--;
+        GameObject ToDestroy=swarm_entities.FindLast(x => x.name.Contains(currentNumber.ToString()));
+        swarm_entities.Remove(ToDestroy);
+        if(ToDestroy.GetComponent<BasicBehaviourScriptCellulo>().robot!=null)ToDestroy.GetComponent<BasicBehaviourScriptCellulo>().robot.clearTracking ();
+        Destroy(ToDestroy);
+        
     }
 }
